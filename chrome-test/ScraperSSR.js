@@ -91,7 +91,6 @@ class ScraperSSR {
 }
 
 let scraper;
-
 module.exports = {
     scraper: new ScraperSSR(),
     lambdaHandler: async (event, context, _this) => {
