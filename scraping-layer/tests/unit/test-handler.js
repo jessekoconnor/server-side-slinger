@@ -5,36 +5,10 @@ const expect = chai.expect;
 let request = require('request');
 
 describe('test chrome', () => {
-    let url = 'http://localhost:3000/ssr',
-        res;
+    let url = 'http://localhost:3000/ssr';
 
     beforeEach(()=>{
         url = 'http://localhost:3000';
-    });
-
-    describe('blaze yoga', () => {
-
-        beforeEach(async ()=>{
-            url += '/blaze';
-
-        });
-
-        it('should return at least 15 results', async () => {
-            // console.log('Spec result for Blaze: ', res);
-            res = await getRequest(url);
-            expect(res.events.length > 14).to.be.true;
-        }).timeout(20000);
-
-        it('should have a header and events (each contain at least rawDate and title)', async () => {
-            res = await getRequest(url);
-            // console.log('Spec result for Blaze: ', res);
-            expect(res.header).to.be.an('object');
-            expect(res.events).to.be.an('array');
-            res.events.forEach(event => {
-                expect(event.title).to.be.an('string');
-                expect(isValidDate(event.rawDate)).to.be.true;
-            });
-        }).timeout(20000);
     });
 
     describe('ssr basic', function () {
@@ -56,7 +30,6 @@ describe('test chrome', () => {
         //     expect(response.message).to.be.equal("Google");
         //     expect(response.location).to.be.an("string");
         // });
-
 
         // it('should return for blaze simple', async () => {
         //
@@ -147,13 +120,4 @@ function getRequest(url) {
             }
         );
     });
-}
-
-// First try to just make a date first, then try other options
-function isValidDate(dateStr) {
-    let newDate = new Date(dateStr);
-    if (isNaN(newDate.getTime())) {
-        return false;
-    }
-    return true;
 }

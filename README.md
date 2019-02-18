@@ -152,3 +152,26 @@ Here are a few ideas that you can use to get more acquainted as to how this over
 Next, you can use the following resources to know more about beyond hello world samples and how others structure their Serverless applications:
 
 * [AWS Serverless Application Repository](https://aws.amazon.com/serverless/serverlessrepo/)
+
+## Running locally with Dynamo
+Got to run a local docker container for dynamo:
+```cd chrome-test && npm run local-dynamo```
+Also need to create the table too:
+```
+aws dynamodb create-table \
+--endpoint-url http://localhost:8000 \
+--table-name table3 \
+--attribute-definitions AttributeName=id,AttributeType=S \
+--key-schema AttributeName=id,KeyType=HASH \
+--provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+```
+
+Scan a table using the following:
+```
+aws dynamodb scan --endpoint-url http://localhost:8000 --table-name table
+```
+
+List the tables:
+```
+aws dynamodb list-tables --endpoint-url http://localhost:8000
+```

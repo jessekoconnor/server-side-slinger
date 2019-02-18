@@ -1,5 +1,5 @@
 {
-  "name": "chrome-test",
+  "name": "scraping-layer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,7 +12,6 @@
   "scripts": {
     "test": "mocha tests/unit/",
     "tdd": "mocha tests/unit/ -w",
-    "load-test": "loadtest -n 10 -c 3 http://localhost:3000/blaze",
     "memory": "du -sh ./*"
   },
   "devDependencies": {

@@ -4,87 +4,95 @@ Description: >
     sam-app
 
     Sample SAM Template for sam-app
-    
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
     Function:
         Timeout: 3
-
+        Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+            Variables:
+                TABLE_NAME: !Ref WidgetCache
+        CodeUri: chrome-test/
+        Runtime: nodejs8.10
+        MemorySize: 1600
+        Timeout: 30
 
 Resources:
-    ssr:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-        Properties:
-            CodeUri: chrome-test/
-            Handler: ScraperSSR.lambdaHandler
-            Runtime: nodejs8.10
-            MemorySize: 1600
-            Timeout: 30
-            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-                Variables:
-                    PARAM1: VALUE
-            Events:
-                BasicCase:
-                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-                    Properties:
-                        Path: /ssr
-                        Method: post
+#    ssr:
+#        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+#        Properties:
+#            CodeUri: chrome-test/
+#            Handler: ScraperSSR.lambdaHandler
+#            Runtime: nodejs8.10
+#            MemorySize: 1600
+#            Timeout: 30
+#            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+#                Variables:
+#                    PARAM1: VALUE
+#            Events:
+#                BasicCase:
+#                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#                    Properties:
+#                        Path: /ssr
+#                        Method: post
 
-    blaze:
+    Blaze:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
-            CodeUri: chrome-test/
-            Handler: BlazeYoga.lambdaHandler
-            Runtime: nodejs8.10
-            MemorySize: 1600
-            Timeout: 30
+            Handler: index.blazeHandler
+            Policies:
+            - DynamoDBCrudPolicy:
+#                  TableName: 'JesseTest'
+                  TableName: !Ref WidgetCache
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
-                    PARAM1: VALUE
+                    TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
                     Properties:
                         Path: /blaze
                         Method: get
+#            Layers:
+#                - !Ref scrapingLayer
 
-    ssrLayer:
-        Type: AWS::Serverless::LayerVersion
+    WidgetCache:
+        Type: AWS::Serverless::SimpleTable
         Properties:
-            LayerName: ChromeLayer
-            Description: Layer to utilize chrome
-            ContentUri: chrome-test/
-            CompatibleRuntimes:
-                - nodejs8.10
-            LicenseInfo: 'Available under the MIT-0 license.'
-            RetentionPolicy: Retain
+            TableName: widget-cache
+#                PrimaryKey:
+#                    Name: id
+#                    Type: String
+#                ProvisionedThroughput:
+#                    ReadCapacityUnits: 5
+#                    WriteCapacityUnits: 5
+##                Tags:
+##                    Department: Engineering
+##                    AppType: Serverless
+#                SSESpecification:
+#                    SSEEnabled: true
 
-    HelloWorldFunction:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-        Properties:
-            CodeUri: hello-world/
-            Handler: app.lambdaHandler
-            Runtime: nodejs8.10
-            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-                Variables:
-                    PARAM1: VALUE
-            Events:
-                HelloWorld:
-                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-                    Properties:
-                        Path: /hello
-                        Method: get
+#    scrapingLayer:
+#        Type: AWS::Serverless::LayerVersion
+#        Properties:
+#            LayerName: ScrapingLayer
+#            Description: Layer to utilize chrome scraping
+#            ContentUri: scraping-layer
+#            CompatibleRuntimes:
+#                - nodejs8.10
+#            LicenseInfo: 'Available under the MIT-0 license.'
+#            RetentionPolicy: Retain
 
-Outputs:
-
-    HelloWorldApi:
-          Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-          Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-
-    HelloWorldFunction:
-          Description: "Hello World Lambda Function ARN"
-          Value: !GetAtt HelloWorldFunction.Arn
-
-    HelloWorldFunctionIamRole:
-          Description: "Implicit IAM Role created for Hello World function"
-          Value: !GetAtt HelloWorldFunctionRole.Arn
+#Outputs:
+#
+#    HelloWorldApi:
+#          Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+#          Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+#
+#    HelloWorldFunction:
+#          Description: "Hello World Lambda Function ARN"
+#          Value: !GetAtt HelloWorldFunction.Arn
+#
+#    HelloWorldFunctionIamRole:
+#          Description: "Implicit IAM Role created for Hello World function"
+#          Value: !GetAtt HelloWorldFunctionRole.Arn

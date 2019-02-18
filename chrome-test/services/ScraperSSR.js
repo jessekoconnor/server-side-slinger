@@ -2,31 +2,65 @@ let
     // puppeteer = require('puppeteer'),
     puppeteer = require('puppeteer-core'),
     chromium = require('chrome-aws-lambda'),
-    browser;
+    browser,
+    took = (start, end, label) => {
+        let dif = start.getTime() - end.getTime(),
+            Seconds_from_T1_to_T2 = dif / 1000,
+            Seconds_Between_Dates = Math.abs(Seconds_from_T1_to_T2);
+        console.log(label + " took: ", Seconds_Between_Dates);
+    },
+    loadTime = new Date(),
+    launchBrowser = async () => {
+        return puppeteer.launch({
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath,
+                headless: chromium.headless
+        });
+    };
 
 class ScraperSSR {
 
     // Hold up until the page loads
     async waitTillPageLoads(url) {
         try {
+            let startTime = new Date();
             // browser = await puppeteer.launch({headless: true});
-            browser = await puppeteer.launch({
-                  args: chromium.args,
-                  defaultViewport: chromium.defaultViewport,
-                  executablePath: await chromium.executablePath,
-                  headless: chromium.headless,
+            if(!browser) {
+                console.log('Generating browser...');
+                browser = await launchBrowser();
+                browser.on('disconnected', async () => {
+                    console.log('browser is disconnected.');
+                    await launchBrowser();
                 });
+            }
+
+            // Profiling Launch
+            let launchedTime = new Date();
+            took(startTime, launchedTime, 'Puppeteer launch');
+
+
             const page = await browser.newPage();
+
+            // Profiling new page
+            let newPageLoaded = new Date();
+            took(launchedTime, newPageLoaded, 'New Page');
+
             await page.goto(url, {waitUntil: 'domcontentloaded'});
+
+            // Profiling page.goTo
+            let goTo = new Date();
+            took(newPageLoaded, goTo, 'page.goTo');
+
             return page;
         } catch (error) {
             console.log('could not load page: ', error);
         }
     }
 
-    async closeBrowser() {
-        await browser.close();
-    }
+    // async closeBrowser() {
+    //     await browser.close();
+    // }
 
     // Extract data from an element
     async evaluateElelemt(page, selector) {
@@ -75,17 +109,33 @@ class ScraperSSR {
 
     // Main Method
     async run(url, primarySelector, subSelectors) {
+        // Profile lambdaLoad
+        let startTime = new Date();
+        took(loadTime, startTime, '-------- Lambda loading --------');
+
         let page = await this.waitTillPageLoads(url);
 
-        console.log('gotHere1', url, primarySelector, subSelectors);
+        // Profile pageLoad
+        let pageLoaded = new Date();
+        took(startTime, pageLoaded, '-------- Function waitTillPageLoads --------');
+
+        // console.log('[Scraper SSR] run debug', url, primarySelector, subSelectors);
 
         // Wait for first selector before proceeding
         await page.waitFor(primarySelector);
 
+        // Profile waitFor
+        let waitFor = new Date();
+        took(pageLoaded, waitFor, '-------- Function waitForSelector --------');
+
         let result = await this.getSelection(page, primarySelector, subSelectors);
 
+        // Profile getSelection
+        let getSelection = new Date();
+        took(waitFor, getSelection, '-------- Function getSelection --------');
+
         // Close browser and return
-        this.closeBrowser();
+        // this.closeBrowser();
         return result;
     }
 }
