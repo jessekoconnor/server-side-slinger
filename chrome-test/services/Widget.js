@@ -15,7 +15,8 @@ module.exports = class Widget {
         try {
             // Check the cache, return if still valid
             let cachedData = await CachingService.getWidget(this.widgetKey);
-            if(cachedData.isValid) {
+            if(cachedData && cachedData.isValid) {
+                console.log(`Returning cached widget `, this.widgetKey)
                 return cachedData.doc;
             }
 

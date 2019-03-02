@@ -17,12 +17,18 @@ function oneDayYoung(date) {
 exports.getWidget = async(id) => {
     try {
         let res = await exports.get(id);
-        let cacheDate = new Date(res.created);
-        res.doc = JSON.parse(res.doc);
-        res.isValid = oneDayYoung(cacheDate);
+
+        // Check created date for validity
+        if(res && res.created) {
+            let cacheDate = new Date(res.created);
+            res.doc = JSON.parse(res.doc);
+            res.isValid = oneDayYoung(cacheDate);
+        }
+
         return res;
-    } catch(er) {
+    } catch(err) {
         console.log(`GET WIDGET FAILED FOR id = ${id}, WITH ERROR: ${err}`);
+        return err;
     }
 };
 
@@ -34,7 +40,6 @@ exports.get = async (id) => {
                 id: id
             }
         };
-        console.log('Tablename: ', params);
 
         let data = await dynamo.get(params).promise();
         // console.log('*** Success Response from Dynamo*****', Object.keys(data));
