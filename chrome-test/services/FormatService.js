@@ -1,3 +1,5 @@
+const s3Prefix = 'https://s3.amazonaws.com/dashmobile/img/';
+
 module.exports = new class FormatService {
     constructor() {
         this.DateService = require('services/DateService');
@@ -32,8 +34,8 @@ module.exports = new class FormatService {
         return {
             title: title,
             subTitle: subtitle,
-            imageFile: avatar,
-            avatar32x32url: favicon
+            imageFile: s3Prefix + 'avatar/' + avatar,
+            avatar32x32url: s3Prefix + 'favicon/' + favicon
         };
     }
 

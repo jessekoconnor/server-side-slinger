@@ -70,11 +70,15 @@ class ScraperSSR {
                 return nodes.map(n => n.innerText);
             });
         } else {
-            return await page.$$eval(selector.query, async (nodes,attr) => {
-                console.log('gotAttributeNode', nodes[0]);
-                if(nodes.length === 1) return nodes[0].getAttribute(attr);
-                return nodes.map(n => n.getAttribute(attr));
+            let data = await page.$$eval(selector.query, async (nodes,attr) => {
+                let info = nodes.map(n => n.getAttribute(attr));
+                if(info.length === 1) info = info[0];
+                return info;
             }, selector.attribute);
+            if(selector.json) {
+                data = data.map(n => JSON.parse(n))
+            }
+            return data;
         }
     }
 
@@ -122,7 +126,7 @@ class ScraperSSR {
         // console.log('[Scraper SSR] run debug', url, primarySelector, subSelectors);
 
         // Wait for first selector before proceeding
-        await page.waitFor(primarySelector);
+        await page.waitFor(primarySelector.query || primarySelector);
 
         // Profile waitFor
         let waitFor = new Date();

@@ -36,6 +36,24 @@ Resources:
 #                        Path: /ssr
 #                        Method: post
 
+    3BridgesYoga:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            Handler: widgets/3BridgesYoga.lambdaHandler
+            CodeUri: chrome-test/
+            Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
+            Events:
+                BasicCase:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /3by
+                        Method: get
+
     Blaze:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
@@ -43,7 +61,6 @@ Resources:
             CodeUri: chrome-test/
             Policies:
             - DynamoDBCrudPolicy:
-#                  TableName: 'JesseTest'
                   TableName: !Ref WidgetCache
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:

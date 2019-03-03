@@ -16,15 +16,17 @@ module.exports = class Widget {
             // Check the cache, return if still valid
             let cachedData = await CachingService.getWidget(this.widgetKey);
             if(cachedData && cachedData.isValid) {
-                console.log(`Returning cached widget `, this.widgetKey)
+                console.log(`Returning cached widget `, this.widgetKey);
                 return cachedData.doc;
+            } else {
+                console.log(`Cache not valid, fetching data... `, this.widgetKey);
             }
 
             // Otherwise scrape
             let scrapingResult = await this.scrapeEasy(this.scrapingArgs, this.formatEachEvent);
 
             // and then cache result
-            CachingService.put(this.widgetKey, scrapingResult);
+            await CachingService.put(this.widgetKey, scrapingResult);
             return scrapingResult;
         } catch(err) {
             console.log(`Scrape And Cache FAILED FOR id = ${this.widgetKey}, WITH ERROR: ${err}`);
@@ -38,7 +40,10 @@ module.exports = class Widget {
         // Format each event
         let formattedEvents = [];
         for(let event of events) {
-            formattedEvents.push(formatEachEvent(event));
+            let formattedEvent = await formatEachEvent(event);
+            if(formattedEvent) {
+                formattedEvents.push(formattedEvent);
+            }
         }
 
         // Return and cache result
