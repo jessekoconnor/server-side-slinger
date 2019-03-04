@@ -17,14 +17,22 @@ module.exports = new class FormatService {
     formatEvent(title, dateStringStart, dateStringEnd) {
         // Grab raw date nice and easy
         let rawDateStart = this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringStart))),
-            rawDateEnd = dateStringEnd ? this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringEnd))) : undefined;
+            rawDateEnd = dateStringEnd ? this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringEnd))) : undefined,
+            endTime;
+
+        if(dateStringEnd) {
+            endTime = this.tryCatch(() => (this.DateService.formatAMPM(rawDateEnd)));
+            if(endTime.startsWith('Caught on')) {
+                endTime = undefined;
+            }
+        }
 
         return {
             rawDate: rawDateStart,
             rawDateEnd: rawDateEnd, // doesnt list any
             humanDate: this.tryCatch(() => (this.DateService.dateToString(rawDateStart))),
             startTime: this.tryCatch(() => (this.DateService.formatAMPM(rawDateStart))),
-            endTime: this.tryCatch(() => (this.DateService.formatAMPM(rawDateEnd))),
+            endTime: endTime,
             title: title,
         };
     }

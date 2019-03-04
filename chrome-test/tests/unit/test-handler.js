@@ -12,6 +12,31 @@ describe('test chrome', () => {
         url = 'http://localhost:3000';
     });
 
+    describe('PressRoom', () => {
+
+        beforeEach(async ()=>{
+            url += '/pressRoom';
+
+        });
+
+        it('should return at least 15 results', async () => {
+            res = await getRequest(url);
+            // console.log('Spec result for PresRoom: ', res);
+            expect(res.events.length > 15).to.be.true;
+        }).timeout(20000);
+
+        it('should have a header and events (each contain at least rawDate and title)', async () => {
+            res = await getRequest(url);
+            // console.log('Spec result for Blaze: ', res);
+            expect(res.header).to.be.an('object');
+            expect(res.events).to.be.an('array');
+            res.events.forEach(event => {
+                expect(event.title).to.be.an('string');
+                expect(isValidDate(event.rawDate)).to.be.true;
+            });
+        }).timeout(20000);
+    });
+
     describe('3 bridges yoga', () => {
 
         beforeEach(async ()=>{

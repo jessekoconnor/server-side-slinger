@@ -36,6 +36,24 @@ Resources:
 #                        Path: /ssr
 #                        Method: post
 
+    PressRoom:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            Handler: widgets/PressRoom.lambdaHandler
+            CodeUri: chrome-test/
+            Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
+            Events:
+                BasicCase:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /pressRoom
+                        Method: get
+
     3BridgesYoga:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
