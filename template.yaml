@@ -18,23 +18,23 @@ Globals:
         Timeout: 30
 
 Resources:
-#    ssr:
-#        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-#        Properties:
-#            CodeUri: chrome-test/
-#            Handler: ScraperSSR.lambdaHandler
-#            Runtime: nodejs8.10
-#            MemorySize: 1600
-#            Timeout: 30
-#            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-#                Variables:
-#                    PARAM1: VALUE
-#            Events:
-#                BasicCase:
-#                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#                    Properties:
-#                        Path: /ssr
-#                        Method: post
+    Lifestyle:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            Handler: dashboards/Lifestyle.lambdaHandler
+            CodeUri: chrome-test/
+            Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
+            Events:
+                BasicCase:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /lifestyle
+                        Method: get
 
     PressRoom:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -89,13 +89,17 @@ Resources:
                     Properties:
                         Path: /blaze
                         Method: get
-#            Layers:
-#                - !Ref scrapingLayer
+
 
     WidgetCache:
         Type: AWS::Serverless::SimpleTable
         Properties:
             TableName: widget-cache
+
+
+#            Layers:
+#                - !Ref scrapingLayer
+
 #                PrimaryKey:
 #                    Name: id
 #                    Type: String

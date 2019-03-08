@@ -1,9 +1,7 @@
 const CachingService = require('./CachingService');
 const FormatService = require('./FormatService');
 const ScraperSSR = require('./ScraperSSR');
-
 module.exports = class Widget {
-
     constructor(widgetKey, title, subtitle, avatarUrl, faviconUrl, scrapingArgs, formatEachEvent) {
         this.widgetKey = widgetKey;
         this.header = FormatService.formatheader(title, subtitle, avatarUrl, faviconUrl);
@@ -14,7 +12,9 @@ module.exports = class Widget {
     async scrapeAndCache() {
         try {
             // Check the cache, return if still valid
-            let cachedData = await CachingService.getWidget(this.widgetKey);
+            let cachedData = await CachingService.getWidget(this.widgetKey),
+                fetchStart = new Date();
+
             if(cachedData && cachedData.isValid) {
                 console.log(`Returning cached widget `, this.widgetKey);
                 return cachedData.doc;
@@ -24,6 +24,9 @@ module.exports = class Widget {
 
             // Otherwise scrape
             let scrapingResult = await this.scrapeEasy(this.scrapingArgs, this.formatEachEvent);
+
+            // Grab the total time btw scrape and cache
+            scrapingResult.timeTaken = new Date().getTime() - fetchStart.getTime();
 
             // and then cache result
             await CachingService.put(this.widgetKey, scrapingResult);
@@ -61,6 +64,17 @@ module.exports = class Widget {
                 return context.fail(error);
             }
             return context.succeed({statusCode: 200, body: JSON.stringify(result)});
+        };
+    }
+
+    // async createLambdaHandler(event, context) {
+    createScrapingHandler() {
+        return async () => {
+            try {
+                return this.scrapeAndCache();
+            } catch (error) {
+                console.log(`scrapeAndCache errored: ${error}`);
+            }
         };
     }
 };

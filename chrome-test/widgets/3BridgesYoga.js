@@ -3,7 +3,7 @@ const FormatService = require('../services/FormatService');
 const DateService = require('../services/DateService');
 const Widget = require('../services/Widget');
 
-exports.lambdaHandler = new Widget('3BY_YOGA', '3 Bridges Yoga', 'Portsmouth', '3BridgesYoga-wide-640.png', '3BYfavicon.png',
+let core = new Widget('3BY_YOGA', '3 Bridges Yoga', 'Portsmouth', '3BridgesYoga-wide-640.png', '3BYfavicon.png',
     [
         'https://www.3bridgesyoga.com/portsmouth-schedule/?tribe_event_display=month',
         {
@@ -40,5 +40,7 @@ exports.lambdaHandler = new Widget('3BY_YOGA', '3 Bridges Yoga', 'Portsmouth', '
         // ------
 
         return FormatService.formatEvent(element.title, rawDate, rawDateEnd);
-    }).createLambdaHandler();
-    // event => FormatService.formatEvent(event[0] + event[1], event[2], event[3])).createLambdaHandler();
+    });
+
+exports.lambdaHandler = core.createLambdaHandler();
+exports.scrapeAndCache = core.createScrapingHandler();

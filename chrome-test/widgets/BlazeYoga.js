@@ -2,7 +2,7 @@
 const FormatService = require('../services/FormatService');
 const Widget = require('../services/Widget');
 
-exports.lambdaHandler = new Widget('BLAZE_YOGA', 'Blaze Yoga', 'Portsmouth', '', '',
+let core = new Widget('BLAZE_YOGA', 'Blaze Yoga', 'Portsmouth', '', '',
     [
         'https://www.blazenh.com/schedule',
         'div.bw-session__basics',
@@ -23,4 +23,7 @@ exports.lambdaHandler = new Widget('BLAZE_YOGA', 'Blaze Yoga', 'Portsmouth', '',
             }
         ]
     ],
-    event => FormatService.formatEvent(event[0] + event[1], event[2], event[3])).createLambdaHandler();
+    event => FormatService.formatEvent(event[0] + event[1], event[2], event[3]));
+
+exports.lambdaHandler = core.createLambdaHandler();
+exports.scrapeAndCache = core.createScrapingHandler();

@@ -12,158 +12,176 @@ describe('test chrome', () => {
         url = 'http://localhost:3000';
     });
 
-    describe('PressRoom', () => {
+    describe('Dashboards', () => {
+        describe('Lifestyle', () => {
 
-        beforeEach(async ()=>{
-            url += '/pressRoom';
-
-        });
-
-        it('should return at least 15 results', async () => {
-            res = await getRequest(url);
-            // console.log('Spec result for PresRoom: ', res);
-            expect(res.events.length > 15).to.be.true;
-        }).timeout(20000);
-
-        it('should have a header and events (each contain at least rawDate and title)', async () => {
-            res = await getRequest(url);
-            // console.log('Spec result for Blaze: ', res);
-            expect(res.header).to.be.an('object');
-            expect(res.events).to.be.an('array');
-            res.events.forEach(event => {
-                expect(event.title).to.be.an('string');
-                expect(isValidDate(event.rawDate)).to.be.true;
+            beforeEach(async ()=>{
+                url += '/lifestyle';
             });
-        }).timeout(20000);
+
+            it('should return at least 15 results for each widget', async () => {
+                res = await getRequest(url);
+                // console.log('Spec result for Lifestyle: ', res);
+                res.forEach(widget => expect(widget.events.length > 15).to.be.true);
+            }).timeout(20000);
+        });
     });
 
-    describe('3 bridges yoga', () => {
+    describe('Widgets', () => {
+        describe('PressRoom', () => {
 
-        beforeEach(async ()=>{
-            url += '/3by';
-
-        });
-
-        it('should return at least 15 results', async () => {
-            res = await getRequest(url);
-            // console.log('Spec result for 3by: ', res);
-            expect(res.events.length > 15).to.be.true;
-        }).timeout(20000);
-
-        it('should have a header and events (each contain at least rawDate and title)', async () => {
-            res = await getRequest(url);
-            // console.log('Spec result for Blaze: ', res);
-            expect(res.header).to.be.an('object');
-            expect(res.events).to.be.an('array');
-            res.events.forEach(event => {
-                expect(event.title).to.be.an('string');
-                expect(isValidDate(event.rawDate)).to.be.true;
+            beforeEach(async ()=>{
+                url += '/pressRoom';
             });
-        }).timeout(20000);
-    });
 
-    describe('blaze yoga', () => {
+            it('should return at least 15 results', async () => {
+                res = await getRequest(url);
+                // console.log('Spec result for PresRoom: ', res);
+                expect(res.events.length > 15).to.be.true;
+            }).timeout(20000);
 
-        beforeEach(async ()=>{
-            url += '/blaze';
-
+            it('should have a header and events (each contain at least rawDate and title)', async () => {
+                res = await getRequest(url);
+                // console.log('Spec result for Blaze: ', res);
+                expect(res.header).to.be.an('object');
+                expect(res.events).to.be.an('array');
+                res.events.forEach(event => {
+                    expect(event.title).to.be.an('string');
+                    expect(isValidDate(event.rawDate)).to.be.true;
+                });
+            }).timeout(20000);
         });
 
-        it('should return at least 15 results', async () => {
-            // console.log('Spec result for Blaze: ', res);
-            res = await getRequest(url);
-            expect(res.events.length > 14).to.be.true;
-        }).timeout(20000);
+        describe('3 bridges yoga', () => {
 
-        it('should have a header and events (each contain at least rawDate and title)', async () => {
-            res = await getRequest(url);
-            // console.log('Spec result for Blaze: ', res);
-            expect(res.header).to.be.an('object');
-            expect(res.events).to.be.an('array');
-            res.events.forEach(event => {
-                expect(event.title).to.be.an('string');
-                expect(isValidDate(event.rawDate)).to.be.true;
+            beforeEach(async ()=>{
+                url += '/3by';
+
             });
-        }).timeout(20000);
-    });
 
-    describe('ssr basic', function () {
+            it('should return at least 15 results', async () => {
+                res = await getRequest(url);
+                // console.log('Spec result for 3by: ', res);
+                expect(res.events.length > 15).to.be.true;
+            }).timeout(20000);
 
-        beforeEach(()=>{
-            url += '/ssr';
+            it('should have a header and events (each contain at least rawDate and title)', async () => {
+                res = await getRequest(url);
+                // console.log('Spec result for Blaze: ', res);
+                expect(res.header).to.be.an('object');
+                expect(res.events).to.be.an('array');
+                res.events.forEach(event => {
+                    expect(event.title).to.be.an('string');
+                    expect(isValidDate(event.rawDate)).to.be.true;
+                });
+            }).timeout(20000);
         });
 
-        // it('verifies successful response', async () => {
-        //     const result = await app.lambdaHandler(event, context)
-        //
-        //     expect(result).to.be.an('object');
-        //     expect(result.statusCode).to.equal(200);
-        //     expect(result.body).to.be.an('string');
-        //
-        //     let response = JSON.parse(result.body);
-        //
-        //     expect(response).to.be.an('object');
-        //     expect(response.message).to.be.equal("Google");
-        //     expect(response.location).to.be.an("string");
-        // });
+        describe('blaze yoga', () => {
+
+            beforeEach(async ()=>{
+                url += '/blaze';
+
+            });
+
+            it('should return at least 15 results', async () => {
+                // console.log('Spec result for Blaze: ', res);
+                res = await getRequest(url);
+                expect(res.events.length > 14).to.be.true;
+            }).timeout(20000);
+
+            it('should have a header and events (each contain at least rawDate and title)', async () => {
+                res = await getRequest(url);
+                // console.log('Spec result for Blaze: ', res);
+                expect(res.header).to.be.an('object');
+                expect(res.events).to.be.an('array');
+                res.events.forEach(event => {
+                    expect(event.title).to.be.an('string');
+                    expect(isValidDate(event.rawDate)).to.be.true;
+                });
+            }).timeout(20000);
+        });
+
+        describe('ssr basic', function () {
+
+            beforeEach(()=>{
+                url += '/ssr';
+            });
+
+            // it('verifies successful response', async () => {
+            //     const result = await app.lambdaHandler(event, context)
+            //
+            //     expect(result).to.be.an('object');
+            //     expect(result.statusCode).to.equal(200);
+            //     expect(result.body).to.be.an('string');
+            //
+            //     let response = JSON.parse(result.body);
+            //
+            //     expect(response).to.be.an('object');
+            //     expect(response.message).to.be.equal("Google");
+            //     expect(response.location).to.be.an("string");
+            // });
 
 
-        // it('should return for blaze simple', async () => {
-        //
-        //     let res = await postRequest(url,
-        //         [
-        //             'https://www.blazenh.com/schedule',
-        //             'div.bw-session__basics'
-        //         ]);
-        //     console.log('Spec result for SSR Scraper: ', res);
-        //     expect(res).to.be.an("array");
-        // }).timeout(15000);
-        //
-        // it('should return for blaze w/ subselections', async () => {
-        //
-        //     let res = await postRequest(url,
-        //         ['https://www.blazenh.com/schedule', 'div.bw-session__basics',
-        //             [
-        //                 // Start time
-        //                 '.hc_starttime',
-        //                 // End time
-        //                 '.hc_endtime',
-        //                 // Class
-        //                 '.bw-session__type',
-        //                 // Instructor
-        //                 '.bw-session__staff'
-        //             ]
-        //         ]);
-        //     // console.log('Spec result for SSR Scraper: ', res);
-        //     expect(res).to.be.an("array");
-        // }).timeout(15000);
+            // it('should return for blaze simple', async () => {
+            //
+            //     let res = await postRequest(url,
+            //         [
+            //             'https://www.blazenh.com/schedule',
+            //             'div.bw-session__basics'
+            //         ]);
+            //     console.log('Spec result for SSR Scraper: ', res);
+            //     expect(res).to.be.an("array");
+            // }).timeout(15000);
+            //
+            // it('should return for blaze w/ subselections', async () => {
+            //
+            //     let res = await postRequest(url,
+            //         ['https://www.blazenh.com/schedule', 'div.bw-session__basics',
+            //             [
+            //                 // Start time
+            //                 '.hc_starttime',
+            //                 // End time
+            //                 '.hc_endtime',
+            //                 // Class
+            //                 '.bw-session__type',
+            //                 // Instructor
+            //                 '.bw-session__staff'
+            //             ]
+            //         ]);
+            //     // console.log('Spec result for SSR Scraper: ', res);
+            //     expect(res).to.be.an("array");
+            // }).timeout(15000);
 
-        // it('should return for blaze w/ attribute type subselections', async () => {
-        //     let res = await postRequest(url,
-        //         [
-        //             'https://www.blazenh.com/schedule',
-        //             'div.bw-session__basics',
-        //             [
-        //                 // Start time
-        //                 {
-        //                     query: '.hc_starttime',
-        //                     attribute: 'datetime'
-        //                 },
-        //                 // End time
-        //                 {
-        //                     query: '.hc_endtime',
-        //                     attribute: 'datetime'
-        //                 },
-        //                 // Class
-        //                 '.bw-session__type',
-        //                 // Instructor
-        //                 '.bw-session__staff'
-        //             ]
-        //         ]);
-        //     // console.log('Spec result for SSR Scraper: ', res);
-        //     expect(res).to.be.an("array");
-        // }).timeout(20000);
-    });
+            // it('should return for blaze w/ attribute type subselections', async () => {
+            //     let res = await postRequest(url,
+            //         [
+            //             'https://www.blazenh.com/schedule',
+            //             'div.bw-session__basics',
+            //             [
+            //                 // Start time
+            //                 {
+            //                     query: '.hc_starttime',
+            //                     attribute: 'datetime'
+            //                 },
+            //                 // End time
+            //                 {
+            //                     query: '.hc_endtime',
+            //                     attribute: 'datetime'
+            //                 },
+            //                 // Class
+            //                 '.bw-session__type',
+            //                 // Instructor
+            //                 '.bw-session__staff'
+            //             ]
+            //         ]);
+            //     // console.log('Spec result for SSR Scraper: ', res);
+            //     expect(res).to.be.an("array");
+            // }).timeout(20000);
+        });
+    })
+
+
 });
 
 function postRequest(url, payload) {
