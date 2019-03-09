@@ -10,7 +10,8 @@
     "sam-package": "sam package --profile personal --template-file template.yaml --output-template-file packaged.yaml --s3-bucket dashmobile-deploy",
     "sam-deploy": "sam deploy --profile personal --template-file packaged.yaml --stack-name ServerSideScraper --capabilities CAPABILITY_IAM",
     "deploy": "npm run sam-validate && npm run sam-package && npm run sam-deploy",
-    "tdd": "cd chrome-test && npm run tdd && cd ../"
+    "tdd": "cd chrome-test && npm run tdd && cd ../",
+    "resize-images": "cd img && ./deploy.sh && cd ../"
   },
   "author": "",
   "license": "ISC"

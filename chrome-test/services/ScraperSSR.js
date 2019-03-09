@@ -126,7 +126,7 @@ class ScraperSSR {
         // console.log('[Scraper SSR] run debug', url, primarySelector, subSelectors);
 
         // Wait for first selector before proceeding
-        await page.waitFor(primarySelector.query || primarySelector);
+        await page.waitFor(primarySelector.primary || primarySelector.query || primarySelector);
 
         // Profile waitFor
         let waitFor = new Date();

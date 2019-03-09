@@ -7,7 +7,8 @@ let core = new Widget('3BY_YOGA', '3 Bridges Yoga', 'Portsmouth', '3BridgesYoga-
     [
         'https://www.3bridgesyoga.com/portsmouth-schedule/?tribe_event_display=month',
         {
-            query: '.tribe-events-thismonth,.tribe-events-othermonth .type-tribe_events',
+            query: '.tribe-events-present,.tribe-events-future .type-tribe_events',
+            primary: '.tribe-event-day-28',
             attribute: 'data-tribejson',
             json: true
         }
