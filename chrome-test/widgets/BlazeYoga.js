@@ -2,7 +2,11 @@
 const FormatService = require('../services/FormatService');
 const Widget = require('../services/Widget');
 
-let core = new Widget('BLAZE_YOGA', 'Blaze Yoga', 'Portsmouth', '', '',
+const key = 'BlazeYoga';
+const title = 'Blaze Yoga';
+const subtitle = 'Portsmouth';
+
+let core = new Widget(key, title, subtitle,
     [
         'https://www.blazenh.com/schedule',
         'div.bw-session__basics',
@@ -27,3 +31,4 @@ let core = new Widget('BLAZE_YOGA', 'Blaze Yoga', 'Portsmouth', '', '',
 
 exports.lambdaHandler = core.createLambdaHandler();
 exports.scrapeAndCache = core.createScrapingHandler();
+exports.functionName = key;

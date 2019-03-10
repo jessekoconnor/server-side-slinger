@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.TABLE_NAME;
 const createResponse = (statusCode, body) => ({ statusCode, body });
+const disableCache = process.env.DISABLE_WIDGET_CACHE === 'true';
 
 function oneDayYoung(date) {
     const oneday = 60 * 60 * 24 * 1000;
@@ -16,6 +17,12 @@ function oneDayYoung(date) {
 
 exports.getWidget = async(id) => {
     try {
+        // Disable cache if parameter override
+        if(disableCache) {
+            console.log('CACHING IS DISABLED, RETURNING', disableCache);
+            return;
+        }
+
         let res = await exports.get(id);
 
         // Check created date for validity

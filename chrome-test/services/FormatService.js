@@ -38,12 +38,12 @@ module.exports = new class FormatService {
     }
 
     // Format the header in one place
-    formatheader(title, subtitle, avatar, favicon) {
+    formatheader(title, subtitle, widgetKey) {
         return {
             title: title,
             subTitle: subtitle,
-            imageFile: s3Prefix + 'avatar/' + avatar,
-            avatar32x32url: s3Prefix + 'favicon/' + favicon
+            imageFile: s3Prefix + 'avatar/' + widgetKey,
+            avatar32x32url: s3Prefix + 'favicon/' + widgetKey
         };
     }
 

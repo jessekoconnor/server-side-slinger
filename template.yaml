@@ -12,6 +12,8 @@ Globals:
         Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
             Variables:
                 TABLE_NAME: !Ref WidgetCache
+                DISABLE_WIDGET_CACHE: false
+                LOCAL_LAMBDA: false
         CodeUri: chrome-test/
         Runtime: nodejs8.10
         MemorySize: 1600
@@ -20,21 +22,49 @@ Globals:
 Resources:
     Lifestyle:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        DependsOn:
+            - PressRoom
+            - 3BridgesYoga
+            - BlazeYoga
         Properties:
             Handler: dashboards/Lifestyle.lambdaHandler
             CodeUri: chrome-test/
             Policies:
             - DynamoDBCrudPolicy:
-                  TableName: !Ref WidgetCache
+                TableName: !Ref WidgetCache
+            - LambdaInvokePolicy:
+                FunctionName: !Ref 3BridgesYoga
+#            - Version: "2012-10-17"
+#              Statement:
+#              - Effect: "Allow"
+#                Action:
+#                - "lambda:InvokeFunction"
+#                Resource: !Ref BlazeYoga.Version
+#            - Version: "2012-10-17"
+#              Statement:
+#                - Effect: "Allow"
+#                  Action:
+#                    - "lambda:InvokeFunction"
+#                  Resource: !Ref PressRoom.Version
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
                     TABLE_NAME: !Ref WidgetCache
+                    FunctionName: !Ref 3BridgesYoga
             Events:
                 BasicCase:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
                     Properties:
                         Path: /lifestyle
                         Method: get
+
+#    ConfigLambdaPermission:
+#        Type: "AWS::Lambda::Permission"
+#        DependsOn:
+#        - Lifestyle
+#        Properties:
+#            Action: lambda:InvokeFunction
+#            FunctionName: "*"
+#            Principal: apigateway.amazonaws.com
 
     PressRoom:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -72,7 +102,7 @@ Resources:
                         Path: /3by
                         Method: get
 
-    Blaze:
+    BlazeYoga:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
             Handler: widgets/BlazeYoga.lambdaHandler

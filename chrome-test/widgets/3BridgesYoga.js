@@ -3,7 +3,11 @@ const FormatService = require('../services/FormatService');
 const DateService = require('../services/DateService');
 const Widget = require('../services/Widget');
 
-let core = new Widget('3BY_YOGA', '3 Bridges Yoga', 'Portsmouth', '3BridgesYoga-wide-640.png', '3BYfavicon.png',
+const key = '3BridgesYoga';
+const title = '3 Bridges Yoga';
+const subtitle = 'Portsmouth';
+
+let core = new Widget(key, title, subtitle,
     [
         'https://www.3bridgesyoga.com/portsmouth-schedule/?tribe_event_display=month',
         {
@@ -45,3 +49,4 @@ let core = new Widget('3BY_YOGA', '3 Bridges Yoga', 'Portsmouth', '3BridgesYoga-
 
 exports.lambdaHandler = core.createLambdaHandler();
 exports.scrapeAndCache = core.createScrapingHandler();
+exports.functionName = key;

@@ -2,7 +2,11 @@
 const FormatService = require('../services/FormatService');
 const Widget = require('../services/Widget');
 
-let core = new Widget('PRESS_ROOM', 'Press Room', 'Portsmouth', '', '',
+const key = 'PressRoom';
+const title = 'Press Room';
+const subtitle = 'Portsmouth';
+
+let core = new Widget(key, title, subtitle,
     [
         'https://pressroomnh.com/portsmouth-nh-events/month/',
         {
@@ -17,3 +21,4 @@ let core = new Widget('PRESS_ROOM', 'Press Room', 'Portsmouth', '', '',
 
 exports.lambdaHandler = core.createLambdaHandler();
 exports.scrapeAndCache = core.createScrapingHandler();
+exports.functionName = key;

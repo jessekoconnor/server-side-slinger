@@ -36,7 +36,7 @@ describe('test chrome', () => {
 
             it('should return at least 15 results', async () => {
                 res = await getRequest(url);
-                // console.log('Spec result for PresRoom: ', res);
+                // console.log('Spec result for PresRoom: ', res.header);
                 expect(res.events.length > 15).to.be.true;
             }).timeout(20000);
 
@@ -50,6 +50,13 @@ describe('test chrome', () => {
                     expect(isValidDate(event.rawDate)).to.be.true;
                 });
             }).timeout(20000);
+
+            it('should return events that are less than 24 hours old', async () => {
+                res = await getRequest(url);
+                res.events.forEach(event => {
+                    expect(new Date(event.rawDate)).to.be.above(new Date(new Date().getTime() - (1000 * 60 * 60 * 24)));
+                });
+            }).timeout(20000);
         });
 
         describe('3 bridges yoga', () => {
@@ -61,7 +68,7 @@ describe('test chrome', () => {
 
             it('should return at least 15 results', async () => {
                 res = await getRequest(url);
-                // console.log('Spec result for 3by: ', res);
+                // console.log('Spec result for 3by: ', res.header);
                 expect(res.events.length > 15).to.be.true;
             }).timeout(20000);
 
@@ -73,6 +80,13 @@ describe('test chrome', () => {
                 res.events.forEach(event => {
                     expect(event.title).to.be.an('string');
                     expect(isValidDate(event.rawDate)).to.be.true;
+                });
+            }).timeout(20000);
+
+            it('should return events that are less than 24 hours old', async () => {
+                res = await getRequest(url);
+                res.events.forEach(event => {
+                    expect(new Date(event.rawDate)).to.be.above(new Date(new Date().getTime() - (1000 * 60 * 60 * 24)));
                 });
             }).timeout(20000);
         });
@@ -98,6 +112,14 @@ describe('test chrome', () => {
                 res.events.forEach(event => {
                     expect(event.title).to.be.an('string');
                     expect(isValidDate(event.rawDate)).to.be.true;
+                    expect(new Date(event.rawDate)).to.be.above(new Date(new Date().getTime() - (1000 * 60 * 60 * 24)));
+                });
+            }).timeout(20000);
+
+            it('should return events that are less than 24 hours old', async () => {
+                res = await getRequest(url);
+                res.events.forEach(event => {
+                    expect(new Date(event.rawDate)).to.be.above(new Date(new Date().getTime() - (1000 * 60 * 60 * 24)));
                 });
             }).timeout(20000);
         });

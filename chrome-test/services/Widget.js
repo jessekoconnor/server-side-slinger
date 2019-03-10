@@ -1,10 +1,12 @@
 const CachingService = require('./CachingService');
 const FormatService = require('./FormatService');
 const ScraperSSR = require('./ScraperSSR');
+
 module.exports = class Widget {
-    constructor(widgetKey, title, subtitle, avatarUrl, faviconUrl, scrapingArgs, formatEachEvent) {
+    constructor(widgetKey, title, subtitle, scrapingArgs, formatEachEvent) {
         this.widgetKey = widgetKey;
-        this.header = FormatService.formatheader(title, subtitle, avatarUrl, faviconUrl);
+        this.lambdaFunctionName = widgetKey;
+        this.header = FormatService.formatheader(title, subtitle, widgetKey);
         this.scrapingArgs = scrapingArgs;
         this.formatEachEvent = formatEachEvent;
     }
