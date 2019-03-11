@@ -3,16 +3,26 @@ const aws = require('aws-sdk');
 const localLambda = process.env.LOCAL_LAMBDA === 'true';
 
 class Dashboard {
-    constructor(dashTitle, ...widgets) {
+    constructor(dashTitle) {
         this.title = dashTitle;
-        this.widgets = widgets;
+    }
+
+    getFunctionNames() {
+        let functions = [],
+            stub = 'Function';
+        for(let i = 1; i < 20; i++) {
+            if(process.env[stub + i.toString()]) {
+                functions.push(process.env[stub + i.toString()])
+            }
+        }
+        return functions;
     }
 
     async scrape() {
         try {
             let promises = [];
-            for(let widget of this.widgets) {
-                promises.push(this.invokeLambda(widget));
+            for(let funct of this.getFunctionNames()) {
+                promises.push(this.invokeLambda(funct));
             }
             return Promise.all(promises);
         } catch(err) {
@@ -37,11 +47,11 @@ class Dashboard {
         };
     }
 
-    invokeLambda(widget) {
+    invokeLambda(funct) {
         return new Promise((res, rej) => {
             let lambda,
                 params = {
-                    FunctionName: process.env.FunctionName || widget.functionName,
+                    FunctionName: funct,
                     // LogType: 'Tail',
                     Payload: "{}"
                 };
@@ -71,10 +81,7 @@ class Dashboard {
 }
 
 let core = new Dashboard(
-    'Lifestyle',
-    require('../widgets/3BridgesYoga')
-    // ,require('../widgets/BlazeYoga'),
-    // require('../widgets/PressRoom')
+    'Lifestyle'
 );
 
 exports.lambdaHandler = core.createLambdaHandler();

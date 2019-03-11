@@ -1,4 +1,4 @@
-const s3Prefix = 'https://s3.amazonaws.com/dashmobile/img/';
+const s3Prefix = 'https://s3.amazonaws.com/dashmobile-deploy/img/';
 
 module.exports = new class FormatService {
     constructor() {
@@ -42,8 +42,8 @@ module.exports = new class FormatService {
         return {
             title: title,
             subTitle: subtitle,
-            imageFile: s3Prefix + 'avatar/' + widgetKey,
-            avatar32x32url: s3Prefix + 'favicon/' + widgetKey
+            imageFile: s3Prefix + 'avatar/' + widgetKey + '.png',
+            avatar32x32url: s3Prefix + 'favicon/' + widgetKey  + '.png'
         };
     }
 

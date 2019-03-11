@@ -33,23 +33,13 @@ Resources:
             - DynamoDBCrudPolicy:
                 TableName: !Ref WidgetCache
             - LambdaInvokePolicy:
-                FunctionName: !Ref 3BridgesYoga
-#            - Version: "2012-10-17"
-#              Statement:
-#              - Effect: "Allow"
-#                Action:
-#                - "lambda:InvokeFunction"
-#                Resource: !Ref BlazeYoga.Version
-#            - Version: "2012-10-17"
-#              Statement:
-#                - Effect: "Allow"
-#                  Action:
-#                    - "lambda:InvokeFunction"
-#                  Resource: !Ref PressRoom.Version
+                FunctionName: "*"
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
                     TABLE_NAME: !Ref WidgetCache
-                    FunctionName: !Ref 3BridgesYoga
+                    Function1: !Ref 3BridgesYoga
+                    Function2: !Ref BlazeYoga
+                    Function3: !Ref PressRoom
             Events:
                 BasicCase:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
