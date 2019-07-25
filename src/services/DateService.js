@@ -2,40 +2,51 @@ class DateService {
 
     constructor() {
         this.days = [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday"
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday'
         ];
         this.months = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
         ];
     }
 
     // Get AM/PM format from a date
     formatAMPM(date) {
-        var hours = date.getHours();
-        var minutes = date.getMinutes();
-        var ampm = hours >= 12 ? 'pm' : 'am';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0'+minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
-        return strTime;
+        // var hours = date.getHours();
+        // var minutes = date.getMinutes();
+        // var ampm = hours >= 12 ? 'pm' : 'am';
+        // hours = hours % 12;
+        // hours = hours ? hours : 12; // the hour '0' should be '12'
+        // minutes = minutes < 10 ? '0'+minutes : minutes;
+        // var strTime = hours + ':' + minutes + ' ' + ampm;
+        // return strTime;
+
+        // DST fix for now
+        date.setHours(date.getHours() - 1);
+
+        let options = {};
+        options.timeZone = 'America/New_York';
+        // options.timeZoneName = 'short';
+        let timeString = date.toLocaleTimeString('en-US', options);
+        console.log('gotHere0', timeString);
+        console.log('gotHere1', timeString.substr(0,4), timeString.substr(7));
+        return timeString.substring(0,4) + timeString.substr(7);
     }
 
     // First try to just make a date first, then try other options
@@ -51,6 +62,7 @@ class DateService {
     // 'December 29 2018' => '2018-12-29T00:00:00.000Z'
     // '1:00 AM December 29 2018' => '2018-12-29T06:00:00.000Z'
     stringMDToDate(string) {
+        console.log('stringMDToDate', string);
         let newStr = string,
             newDate;
 
@@ -63,15 +75,16 @@ class DateService {
         }
 
         // Turn 9pm into 9:00 pm
-        newStr = newStr.replace(/\s([\d])([am|pm|AM|PM])/, ' $1:00 $2');
+        newStr = newStr.replace(/\s?([\d])([am|pm|AM|PM])/, ' $1:00 $2');
         // Turn 7:30pm into 7:30 pm
         newStr = newStr.replace(/([\d]:\d\d)([am|pm|AM|PM])/, ' $1:00 $2');
-
 
         // Add timezone
         if(newStr.indexOf('EST') < 0) {
             newStr += ' ' + 'EST';
         }
+
+        console.log('stringMDToDate2', newStr);
 
         newDate = new Date(newStr);
         if (isNaN(newDate.getTime())) {

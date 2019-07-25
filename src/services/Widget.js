@@ -62,7 +62,7 @@ module.exports = class Widget {
             try {
                 result = await this.scrapeAndCache();
             } catch (error) {
-                console.log(`lambdahander errored: ${error}`);
+                console.log(`lambdahandler errored: ${error}`);
                 return context.fail(error);
             }
             return context.succeed({statusCode: 200, body: JSON.stringify(result)});

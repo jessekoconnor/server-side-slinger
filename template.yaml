@@ -1,40 +1,44 @@
+# SAM documentation can be found here:
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-    sam-app
+    Server Side Slinger Template
 
-    Sample SAM Template for sam-app
+    Serverless Architecture Model template for Server Side Slinger
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+# Global variables
 Globals:
     Function:
         Timeout: 3
-        Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Environment:
             Variables:
                 TABLE_NAME: !Ref WidgetCache
                 DISABLE_WIDGET_CACHE: false
                 LOCAL_LAMBDA: false
-        CodeUri: chrome-test/
+        CodeUri: src/
         Runtime: nodejs8.10
         MemorySize: 1600
         Timeout: 30
 
 Resources:
+    # -------------------
+    # Dashboards
+    # ----------
     Lifestyle:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Type: AWS::Serverless::Function
         DependsOn:
             - PressRoom
             - 3BridgesYoga
             - BlazeYoga
         Properties:
             Handler: dashboards/Lifestyle.lambdaHandler
-            CodeUri: chrome-test/
+            CodeUri: src/
             Policies:
             - DynamoDBCrudPolicy:
                 TableName: !Ref WidgetCache
             - LambdaInvokePolicy:
                 FunctionName: "*"
-            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+            Environment: # Reference the widget lambdas
                 Variables:
                     TABLE_NAME: !Ref WidgetCache
                     Function1: !Ref 3BridgesYoga
@@ -42,117 +46,76 @@ Resources:
                     Function3: !Ref PressRoom
             Events:
                 BasicCase:
-                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Type: Api 
                     Properties:
                         Path: /lifestyle
                         Method: get
+ 
+    # -------------------
+    # Widgets
+    # ----------
 
-#    ConfigLambdaPermission:
-#        Type: "AWS::Lambda::Permission"
-#        DependsOn:
-#        - Lifestyle
-#        Properties:
-#            Action: lambda:InvokeFunction
-#            FunctionName: "*"
-#            Principal: apigateway.amazonaws.com
-
+    # Scrape Press Room for local music
     PressRoom:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Type: AWS::Serverless::Function
         Properties:
             Handler: widgets/PressRoom.lambdaHandler
-            CodeUri: chrome-test/
+            CodeUri: src/
             Policies:
             - DynamoDBCrudPolicy:
                   TableName: !Ref WidgetCache
-            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+            Environment: 
                 Variables:
                     TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
-                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Type: Api 
                     Properties:
                         Path: /pressRoom
                         Method: get
 
+    # Scrape 3 bridges yoga for classes
     3BridgesYoga:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Type: AWS::Serverless::Function
         Properties:
             Handler: widgets/3BridgesYoga.lambdaHandler
-            CodeUri: chrome-test/
+            CodeUri: src/
             Policies:
             - DynamoDBCrudPolicy:
                   TableName: !Ref WidgetCache
-            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+            Environment: 
                 Variables:
                     TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
-                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Type: Api 
                     Properties:
                         Path: /3by
                         Method: get
 
+    # Scrape blaze yoga for classes
     BlazeYoga:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Type: AWS::Serverless::Function
         Properties:
             Handler: widgets/BlazeYoga.lambdaHandler
-            CodeUri: chrome-test/
+            CodeUri: src/
             Policies:
             - DynamoDBCrudPolicy:
                   TableName: !Ref WidgetCache
-            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+            Environment: 
                 Variables:
                     TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
-                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Type: Api 
                     Properties:
                         Path: /blaze
                         Method: get
-
-
+    
+    # -------------------
+    # Caches
+    # ----------
     WidgetCache:
         Type: AWS::Serverless::SimpleTable
         Properties:
             TableName: widget-cache
-
-
-#            Layers:
-#                - !Ref scrapingLayer
-
-#                PrimaryKey:
-#                    Name: id
-#                    Type: String
-#                ProvisionedThroughput:
-#                    ReadCapacityUnits: 5
-#                    WriteCapacityUnits: 5
-##                Tags:
-##                    Department: Engineering
-##                    AppType: Serverless
-#                SSESpecification:
-#                    SSEEnabled: true
-
-#    scrapingLayer:
-#        Type: AWS::Serverless::LayerVersion
-#        Properties:
-#            LayerName: ScrapingLayer
-#            Description: Layer to utilize chrome scraping
-#            ContentUri: scraping-layer
-#            CompatibleRuntimes:
-#                - nodejs8.10
-#            LicenseInfo: 'Available under the MIT-0 license.'
-#            RetentionPolicy: Retain
-
-#Outputs:
-#
-#    HelloWorldApi:
-#          Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-#          Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-#
-#    HelloWorldFunction:
-#          Description: "Hello World Lambda Function ARN"
-#          Value: !GetAtt HelloWorldFunction.Arn
-#
-#    HelloWorldFunctionIamRole:
-#          Description: "Implicit IAM Role created for Hello World function"
-#          Value: !GetAtt HelloWorldFunctionRole.Arn

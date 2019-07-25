@@ -1,5 +1,4 @@
 let
-    // puppeteer = require('puppeteer'),
     puppeteer = require('puppeteer-core'),
     chromium = require('chrome-aws-lambda'),
     browser,

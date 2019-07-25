@@ -19,6 +19,7 @@ let core = new Widget(key, title, subtitle,
     ],
     async (element) => {
         // console.log('FoundEvent', JSON.stringify(element, null, 2));
+        console.log('FoundEvent', element.dateDisplay, element.title);
         if(!element.dateDisplay) return;
         // ------
         // Get rawDate, start and end times
@@ -37,13 +38,14 @@ let core = new Widget(key, title, subtitle,
                 monthDayStart = monthDay + ' ' + startTime;
             }
             if(endTime) {
-                monthDayEnd = endTime + ' ' + monthDay;
+                monthDayEnd = monthDay + ' ' + endTime;
                 rawDateEnd = DateService.stringMDToDate(monthDayEnd);
             }
         }
         let rawDate = DateService.stringMDToDate(monthDayStart || monthDay);
         // ------
 
+        console.log('Got:', FormatService.formatEvent(element.title, rawDate, rawDateEnd));
         return FormatService.formatEvent(element.title, rawDate, rawDateEnd);
     });
 

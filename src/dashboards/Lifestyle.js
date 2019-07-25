@@ -36,6 +36,7 @@ class Dashboard {
         return async (event, context) => {
             let result;
             try {
+                console.log('GotHere1', event)
                 // result = await this.invokeLambda('3BridgesYoga', "{}");
                 result = await this.scrape();
                 console.log('dashboard lambda handler success', result.map(r => r.header));

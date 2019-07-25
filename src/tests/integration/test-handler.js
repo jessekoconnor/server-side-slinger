@@ -66,9 +66,9 @@ describe('test chrome', () => {
 
             });
 
-            it('should return at least 15 results', async () => {
+            it.only('should return at least 15 results', async () => {
                 res = await getRequest(url);
-                // console.log('Spec result for 3by: ', res.header);
+                // console.log('Spec result for 3by: ', res);
                 expect(res.events.length > 15).to.be.true;
             }).timeout(20000);
 

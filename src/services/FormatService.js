@@ -2,7 +2,7 @@ const s3Prefix = 'https://s3.amazonaws.com/dashmobile-deploy/img/';
 
 module.exports = new class FormatService {
     constructor() {
-        this.DateService = require('services/DateService');
+        this.DateService = require('./DateService');
     }
 
     tryCatch(fun) {
