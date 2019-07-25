@@ -1,7 +1,9 @@
+dist: trusty
 language: node_js
 node_js:
-  - "8"
+  - "7"
 before_install:
+  - nvm install 8.10.0 && nvm use 8.10.0
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
 install: 

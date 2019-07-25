@@ -1,10 +1,10 @@
-# sam-app
+# Server Side Slinger
 
 This is a sample template for sam-app - Below is a brief explanation of what we have generated for you:
 
 ```bash
 .
-├── README.md                   <-- This instructions file
+├── README.md                   <-- This file
 ├── hello-world                 <-- Source code for a lambda function
 │   ├── app.js                  <-- Lambda function code
 │   ├── package.json            <-- NodeJS dependencies
@@ -155,7 +155,7 @@ Next, you can use the following resources to know more about beyond hello world 
 
 ## Running locally with Dynamo
 Got to run a local docker container for dynamo:
-```cd chrome-test && npm run local-dynamo```
+```cd src && npm run local-dynamo```
 Also need to create the table too:
 ```
 aws dynamodb create-table \
