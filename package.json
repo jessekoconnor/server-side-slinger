@@ -7,7 +7,7 @@
     "start-local": "TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-api --profile personal",
     "start-local-lambda": "sam local start-lambda --profile personal",
     "tdd": "cd src && npm run tdd && cd ../",
-    "test": "cd src && npm test && cd ../",
+    "test": "cd src && npm install && npm test && cd ../",
     "integration-test": "cd src && npm run integration-test && cd ../",
     "sam-validate": "sam validate --profile personal -t template.yaml",
     "sam-package": "sam package --profile personal --template-file template.yaml --output-template-file packaged.yaml --s3-bucket dashmobile-deploy",
