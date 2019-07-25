@@ -6,10 +6,10 @@ before_install:
   - nvm install 8.10.0 && nvm use 8.10.0
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
-install: 
-  - npm install
-test: 
-  - npm test
+# install: 
+#   - npm install
+# test: 
+#   - npm test
 env:
   - LAIKA_OPTIONS="-t 5000"
 after_success:
