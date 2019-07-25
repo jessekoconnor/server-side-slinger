@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - "8"
+before_install:
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+install: 
+  - npm install
+test: 
+  - npm test
+env:
+  - LAIKA_OPTIONS="-t 5000"
+after_success:
+  - eval $(aws ecr get-login --region us-east-1)
