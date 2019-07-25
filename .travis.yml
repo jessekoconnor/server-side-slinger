@@ -10,7 +10,6 @@ install:
   - npm install
 test: 
   - npm test
-env:
-  - LAIKA_OPTIONS="-t 5000"
-after_success:
+script:
   - eval $(aws ecr get-login --region us-east-1)
+  - aws s3 ls
