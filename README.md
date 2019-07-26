@@ -5,7 +5,8 @@ This is a service that can be leveraged to easily scrape countless web pages and
 ```bash
 .
 ├── README.md                   <-- This file
-├── .travis..yml                <-- Travis job: runs tests && deploys to lambda (master)
+├── .travis.yml                 <-- Travis job: runs tests && deploys to lambda (master)
+├── .package.json               <-- Contains all ci scripts
 ├── src                         <-- Source code for the Server Side Slinger function
 │   ├── package.json            <-- Scoped to src package.json
 │   └── tests                   <-- Unit tests && Integration tests
