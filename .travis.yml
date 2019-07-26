@@ -9,10 +9,11 @@ before_install:
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
 install: 
-  - travis_wait 60 npm install && run start-local
+  - travis_wait 60 npm install && npm run start-local
   - npm install
 test: 
   - npm test
+  - npm run integration-test
 script:
   - eval $(aws ecr get-login --region us-east-1)
   - npm run deploy-code 
