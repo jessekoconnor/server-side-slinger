@@ -1,6 +1,6 @@
 # Server Side Slinger
 
-This is a sample template for sam-app - Below is a brief explanation of what we have generated for you:
+This is a service that can be leveraged to easily scrape countless web pages and dislplay them in DashMobile. File structure is described below:
 
 ```bash
 .
