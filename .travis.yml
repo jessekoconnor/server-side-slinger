@@ -4,6 +4,10 @@ node_js:
   - "7"
 services:
   - docker
+addons:
+  apt:
+    packages:
+      - docker-ce
 before_install:
   - nvm install 8.10.0 && nvm use 8.10.0
   - pip install --upgrade pip
