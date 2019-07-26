@@ -15,11 +15,9 @@ before_install:
   - pip install --upgrade --user aws-sam-cli
   - export PATH=$PATH:$HOME/.local/bin
   - eval $(aws ecr get-login --no-include-email --region us-west-2)
-install: travis_wait 30 npm run start-local
+before_install: travis_wait 30 npm run start-local
 install: 
-  - npm install
-script: 
-  - npm test
-  - npm run integration-test
+  - cd src && npm install
+script: npm test && npm run integration-test
 script:
   - npm run deploy-code 
