@@ -2,14 +2,17 @@ dist: trusty
 language: node_js
 node_js:
   - "7"
+services:
+  - docker
 before_install:
   - nvm install 8.10.0 && nvm use 8.10.0
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
 install: 
+  - travis_wait 60 npm install && run start-local
   - npm install
 test: 
   - npm test
 script:
   - eval $(aws ecr get-login --region us-east-1)
-  - aws s3 ls
+  - npm run deploy-code 

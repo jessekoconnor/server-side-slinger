@@ -5,12 +5,24 @@ This is a sample template for sam-app - Below is a brief explanation of what we 
 ```bash
 .
 ├── README.md                   <-- This file
-├── hello-world                 <-- Source code for a lambda function
-│   ├── app.js                  <-- Lambda function code
-│   ├── package.json            <-- NodeJS dependencies
-│   └── tests                   <-- Unit tests
-│       └── unit
-│           └── test_handler.js
+├── .travis..yml                <-- Travis job: runs tests && deploys to lambda (master)
+├── src                         <-- Source code for the Server Side Slinger function
+│   ├── package.json            <-- Scoped to src package.json
+│   └── tests                   <-- Unit tests && Integration tests
+│   │   └── unit
+│   │   └── integration
+│   └── dashboards              <-- Dashboards are logical groupings of widgets
+│   │   └── Lifestyle           <-- Yoga classes, live music, and more
+│   └── widgets                 <-- Widgets are logical groupings of widgets
+│   │   └── Press room          <-- local portsmouth bar
+│   │   └── 3 bridges yoga      <-- local portsmouth yoga studio
+│   │   └── Blaze yoga          <-- local portsmouth yoga studio
+│   └── services                <-- Services that handle complex logic
+│   │   └── Caching service     <-- Caches widget results in DynamoDB
+│   │   └── Date service        <-- Parses vague date strings
+│   │   └── Format service      <-- Formats the data for delivery to the front end
+│   │   └── Scraper SSR         <-- Loads up chromium and parses using [Puppeteer](https://github.com/GoogleChrome/puppeteer)
+│   │   └── Widget service      <-- Returns a lambda ready widget
 └── template.yaml               <-- SAM template
 ```
 

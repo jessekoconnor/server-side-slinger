@@ -25,7 +25,7 @@ module.exports = class Widget {
             }
 
             // Otherwise scrape
-            let scrapingResult = await this.scrapeEasy(this.scrapingArgs, this.formatEachEvent);
+            let scrapingResult = await this.scrapeAway(this.scrapingArgs, this.formatEachEvent);
 
             // Grab the total time btw scrape and cache
             scrapingResult.timeTaken = new Date().getTime() - fetchStart.getTime();
@@ -38,7 +38,7 @@ module.exports = class Widget {
         }
     }
 
-    async scrapeEasy(scrapingArgs, formatEachEvent) {
+    async scrapeAway(scrapingArgs, formatEachEvent) {
         // console.log('Scraping Handler: Blaze Yoga scraper returns: ', events);
         let events = await ScraperSSR.scraper.run(...scrapingArgs);
 

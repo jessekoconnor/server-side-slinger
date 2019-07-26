@@ -6,6 +6,8 @@ const DateService = require('../../services/DateService');
 const sinon = require('sinon');
 
 describe('Date Service', () => {
+  let year = new Date().getFullYear();
+
   beforeEach(async () => {
     
   })
@@ -16,42 +18,36 @@ describe('Date Service', () => {
 
   describe.only('stringMDToDate', () => {
     it('should format Month and Day properly', () => {
-      let year = new Date().getFullYear();
       let rawString = 'December 29';
       let expectedDate = new Date(year+'-12-29T05:00:00.000Z')
       expect(DateService.stringMDToDate(rawString).getTime()).to.be.equal(expectedDate.getTime())
     })
 
     it('should format Month, Day, Year properly', () => {
-      let year = new Date().getFullYear();
       let rawString = 'December 29 ' + year;
       let expectedDate = new Date(year+'-12-29T05:00:00.000Z')
       expect(DateService.stringMDToDate(rawString).getTime()).to.be.equal(expectedDate.getTime())
     })
 
     it('should format Month, Day, Year and time (am) properly', () => {
-      let year = new Date().getFullYear();
       let rawString = '1:00 AM December 29 ' + year;
       let expectedDate = new Date(year+'-12-29T06:00:00.000Z')
       expect(DateService.stringMDToDate(rawString).getTime()).to.be.equal(expectedDate.getTime())
     })
 
     it('should format Month, Day and time (pm) properly', () => {
-      let year = new Date().getFullYear();
       let rawString = '1:00 PM December 29 ';
       let expectedDate = new Date(year+'-12-29T18:00:00.000Z')
       expect(DateService.stringMDToDate(rawString).getTime()).to.be.equal(expectedDate.getTime())
     })
 
     it('should handle 1pm edt', () => {
-      let year = new Date().getFullYear();
       let rawString = '1pm December 29 ';
       let expectedDate = new Date(year+'-12-29T18:00:00.000Z')
       expect(DateService.stringMDToDate(rawString).getTime()).to.be.equal(expectedDate.getTime())
     })
 
     // it('should handle 1:30pm', () => {
-    //   let year = new Date().getFullYear();
     //   let rawString = '1:30 pm December 29 ';
     //   let expectedDate = new Date(year+'-12-29T18:00:00.000Z')
     //   expect(DateService.stringMDToDate(rawString).getTime()).to.be.equal(expectedDate.getTime())
