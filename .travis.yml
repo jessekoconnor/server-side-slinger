@@ -9,10 +9,9 @@ addons:
   apt:
     packages:
       - docker-ce
+      - python3.6
 before_install:
   - nvm install 8.10.0 && nvm use 8.10.0
-  - sudo apt-get update
-  - sudo apt-get install python3.6
   - pip3 install awscli --upgrade --user
   - export PATH=$PATH:$HOME/.local/bin
 install: travis_wait 30 npm run start-local
