@@ -13,6 +13,7 @@ before_install:
   - nvm install 8.10.0 && nvm use 8.10.0
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
+  - eval $(aws ecr get-login --no-include-email --region us-west-2)
 install: travis_wait 30 npm run start-local
 install: 
   - npm install
