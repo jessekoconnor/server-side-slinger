@@ -31,6 +31,8 @@ This is a service that can be leveraged to easily scrape countless web pages and
 ```
 
 ## Local dev
+Prerequisites: Need aws cli and sam cli
+
 To run locally, just clone the repo and run the following code:
 ```bash
 npm run start-local
