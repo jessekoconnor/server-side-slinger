@@ -1,3 +1,6 @@
+![SSS Logo](https://i.pinimg.com/originals/f1/01/bc/f101bcae5b65e4e7946b3bf28ef5d67e.jpg)
+Rand Al'Thor (Wheel of Time)
+
 # Server Side Slinger
 
 This is a service that can be leveraged to easily scrape countless web pages and dislplay them in DashMobile. File structure is described below:
