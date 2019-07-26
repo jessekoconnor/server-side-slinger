@@ -11,7 +11,7 @@ addons:
       - docker-ce
 before_install:
   - nvm install 8.10.0 && nvm use 8.10.0
-  - pip install --user awscli
+  - pip install --upgrade --user awscli
   - export PATH=$PATH:$HOME/.local/bin
   - eval $(aws ecr get-login --no-include-email --region us-west-2)
 install: travis_wait 30 npm run start-local
@@ -21,5 +21,4 @@ test:
   - npm test
   - npm run integration-test
 script:
-  - eval $(aws ecr get-login --region us-east-1)
   - npm run deploy-code 
