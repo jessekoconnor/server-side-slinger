@@ -17,7 +17,7 @@ before_install:
 install: travis_wait 30 npm run start-local
 install: 
   - npm install
-test: 
+script: 
   - npm test
   - npm run integration-test
 script:
