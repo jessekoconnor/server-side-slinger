@@ -6,6 +6,7 @@ services:
   - docker
 before_install:
   - nvm install 8.10.0 && nvm use 8.10.0
+  - pip install --upgrade pip
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
 install: travis_wait 30 npm run start-local
