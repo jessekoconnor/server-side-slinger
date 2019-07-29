@@ -20,5 +20,5 @@ install:
   - cd src && npm install
 script: 
   - npm test
-script:
+after_success:
   - npm run deploy-code 
