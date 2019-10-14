@@ -3,6 +3,8 @@ Rand Al'Thor (Wheel of Time)
 
 # Server Side Slinger
 
+![SSS Architecture](img/architecture.png)
+
 This is a service that can be leveraged to easily scrape countless web pages and dislplay them in DashMobile. File structure is described below:
 
 ```bash
