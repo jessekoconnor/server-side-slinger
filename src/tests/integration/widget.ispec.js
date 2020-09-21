@@ -22,7 +22,7 @@ describe('test chrome', () => {
             it('should return at least 15 results for each widget', async () => {
                 res = await getRequest(url);
                 // console.log('Spec result for Lifestyle: ', res);
-                res.forEach(widget => expect(widget.events.length > 15).to.be.true);
+                res.data.forEach(widget => expect(widget.events.length > 15).to.be.true);
             }).timeout(20000);
         });
     });
@@ -66,7 +66,7 @@ describe('test chrome', () => {
 
             });
 
-            it.only('should return at least 15 results', async () => {
+            it('should return at least 15 results', async () => {
                 res = await getRequest(url);
                 // console.log('Spec result for 3by: ', res);
                 expect(res.events.length > 15).to.be.true;

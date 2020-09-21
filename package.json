@@ -4,7 +4,8 @@
   "description": "This is a sample template for sam-app - Below is a brief explanation of what we have generated for you:",
   "main": "index.js",
   "scripts": {
-    "start-local": "TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-api",
+    "start-local": "rm -rf ./.aws-sam/build && (sam local start-lambda &) && TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-api",
+    "kill-local": "kill -l 0 $(ps aux | grep 'sam local' | awk '{print $2}')",
     "start-local-lambda": "sam local start-lambda",
     "tdd": "cd src && npm run tdd && cd ../",
     "test": "cd src && npm install && npm test && cd ../",
@@ -16,5 +17,8 @@
     "deploy-images": "cd img && ./deploy.sh && cd ../"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.754.0"
+  }
 }

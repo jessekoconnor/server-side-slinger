@@ -7,6 +7,7 @@ class Dashboard {
         this.title = dashTitle;
     }
 
+    // Arrayify env variables that start with `Function1...20`
     getFunctionNames() {
         let functions = [],
             stub = 'Function';
@@ -18,6 +19,7 @@ class Dashboard {
         return functions;
     }
 
+    // For each child lambda, invoke
     async scrape() {
         try {
             let promises = [];
@@ -31,12 +33,12 @@ class Dashboard {
         }
     }
 
-    // async createLambdaHandler(event, context) {
+    // Lambda service context encapsulation
     createLambdaHandler() {
         return async (event, context) => {
             let result;
             try {
-                console.log('GotHere1', event)
+                console.log('GotHere1 dawg')
                 // result = await this.invokeLambda('3BridgesYoga', "{}");
                 result = await this.scrape();
                 console.log('dashboard lambda handler success', result.map(r => r.header));
@@ -44,7 +46,14 @@ class Dashboard {
                 console.log(`lambdahander errored: ${error}`);
                 return context.fail(error);
             }
-            return context.succeed({statusCode: 200, body: JSON.stringify(result)});
+
+            // Wrap data in dashboard object
+            let dashboardContainer = {
+                title: this.title,
+                data: result
+            }
+
+            return context.succeed({statusCode: 200, body: JSON.stringify(dashboardContainer)});
         };
     }
 
@@ -82,7 +91,7 @@ class Dashboard {
 }
 
 let core = new Dashboard(
-    'Lifestyle'
+    process.env["DashboardName"]
 );
 
 exports.lambdaHandler = core.createLambdaHandler();

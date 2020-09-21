@@ -16,7 +16,7 @@ Globals:
                 DISABLE_WIDGET_CACHE: false
                 LOCAL_LAMBDA: false
         CodeUri: src/
-        Runtime: nodejs8.10
+        Runtime: nodejs12.x
         MemorySize: 1600
         Timeout: 30
 
@@ -31,7 +31,7 @@ Resources:
             - 3BridgesYoga
             - BlazeYoga
         Properties:
-            Handler: dashboards/Lifestyle.lambdaHandler
+            Handler: components/Dashboard.lambdaHandler
             CodeUri: src/
             Policies:
             - DynamoDBCrudPolicy:
@@ -41,6 +41,7 @@ Resources:
             Environment: # Reference the widget lambdas
                 Variables:
                     TABLE_NAME: !Ref WidgetCache
+                    DashboardName: "Lifestyle"
                     Function1: !Ref 3BridgesYoga
                     Function2: !Ref BlazeYoga
                     Function3: !Ref PressRoom

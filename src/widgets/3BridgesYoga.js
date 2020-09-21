@@ -1,7 +1,7 @@
 
 const FormatService = require('../services/FormatService');
 const DateService = require('../services/DateService');
-const Widget = require('../services/Widget');
+const Widget = require('../components/Widget');
 
 const key = '3BridgesYoga';
 const title = '3 Bridges Yoga';

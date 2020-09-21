@@ -1,6 +1,6 @@
-const CachingService = require('./CachingService');
-const FormatService = require('./FormatService');
-const ScraperSSR = require('./ScraperSSR');
+const CachingService = require('../services/CachingService');
+const FormatService = require('../services/FormatService');
+const ScraperSSR = require('../services/ScraperSSR');
 
 module.exports = class Widget {
     constructor(widgetKey, title, subtitle, scrapingArgs, formatEachEvent) {

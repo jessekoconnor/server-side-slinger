@@ -2,7 +2,7 @@
 
 const chai = require('chai');
 const expect = chai.expect;
-const Widget = require('../../services/Widget');
+const Widget = require('../../components/Widget');
 const sinon = require('sinon');
 
 describe('Widget', () => {

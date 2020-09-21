@@ -16,7 +16,7 @@ describe('Date Service', () => {
     
   })
 
-  describe.only('stringMDToDate', () => {
+  describe('stringMDToDate', () => {
     it('should format Month and Day properly', () => {
       let rawString = 'December 29';
       let expectedDate = new Date(year+'-12-29T05:00:00.000Z')
@@ -35,7 +35,7 @@ describe('Date Service', () => {
       expect(DateService.stringMDToDate(rawString).getTime()).to.be.equal(expectedDate.getTime())
     })
 
-    it('should format Month, Day and time (pm) properly', () => {
+    it('should format Month, Day and time (pm) properly', () => {``
       let rawString = '1:00 PM December 29 ';
       let expectedDate = new Date(year+'-12-29T18:00:00.000Z')
       expect(DateService.stringMDToDate(rawString).getTime()).to.be.equal(expectedDate.getTime())

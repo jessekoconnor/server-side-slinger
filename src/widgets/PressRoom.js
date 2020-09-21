@@ -1,6 +1,6 @@
 
 const FormatService = require('../services/FormatService');
-const Widget = require('../services/Widget');
+const Widget = require('../components/Widget');
 
 const key = 'PressRoom';
 const title = 'Press Room';
