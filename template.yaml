@@ -27,7 +27,6 @@ Resources:
     Lifestyle:
         Type: AWS::Serverless::Function
         DependsOn:
-            - PressRoom
             - 3BridgesYoga
             - BlazeYoga
         Properties:
@@ -44,12 +43,37 @@ Resources:
                     DashboardName: "Lifestyle"
                     Function1: !Ref 3BridgesYoga
                     Function2: !Ref BlazeYoga
-                    Function3: !Ref PressRoom
             Events:
                 BasicCase:
                     Type: Api 
                     Properties:
                         Path: /lifestyle
+                        Method: get
+
+    Nightlife:
+        Type: AWS::Serverless::Function
+        DependsOn:
+            - PressRoom
+            - 3SArtspace
+        Properties:
+            Handler: components/Dashboard.lambdaHandler
+            CodeUri: src/
+            Policies:
+            - DynamoDBCrudPolicy:
+                TableName: !Ref WidgetCache
+            - LambdaInvokePolicy:
+                FunctionName: "*"
+            Environment: # Reference the widget lambdas
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
+                    DashboardName: "Nightlife"
+                    Function1: !Ref 3SArtspace
+                    Function3: !Ref PressRoom
+            Events:
+                BasicCase:
+                    Type: Api 
+                    Properties:
+                        Path: /nightlife
                         Method: get
  
     # -------------------
@@ -111,6 +135,25 @@ Resources:
                     Type: Api 
                     Properties:
                         Path: /blaze
+                        Method: get
+
+    # Scrape 3SArtspace for shows
+    3SArtspace:
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: widgets/3SArtspace.lambdaHandler
+            CodeUri: src/
+            Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
+            Events:
+                BasicCase:
+                    Type: Api 
+                    Properties:
+                        Path: /3s
                         Method: get
     
     # -------------------

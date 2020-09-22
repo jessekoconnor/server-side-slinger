@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-rm -fr dist/*
+rm -fr dist
+mkdir dist
 cp -r avatar dist/avatar
 cp -r favicon dist/favicon
 mogrify -resize x255 dist/avatar/*

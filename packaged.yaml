@@ -1,0 +1,158 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Server Side Slinger Template
+
+  Serverless Architecture Model template for Server Side Slinger
+
+  '
+Globals:
+  Function:
+    Timeout: 30
+    Environment:
+      Variables:
+        TABLE_NAME:
+          Ref: WidgetCache
+        DISABLE_WIDGET_CACHE: false
+        LOCAL_LAMBDA: false
+    CodeUri: src/
+    Runtime: nodejs12.x
+    MemorySize: 1600
+Resources:
+  Lifestyle:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - 3BridgesYoga
+    - BlazeYoga
+    Properties:
+      Handler: components/Dashboard.lambdaHandler
+      CodeUri: s3://dashmobile-deploy/b99d0c44f585413e4a6b311c50f18a61
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: WidgetCache
+      - LambdaInvokePolicy:
+          FunctionName: '*'
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: WidgetCache
+          DashboardName: Lifestyle
+          Function1:
+            Ref: 3BridgesYoga
+          Function2:
+            Ref: BlazeYoga
+      Events:
+        BasicCase:
+          Type: Api
+          Properties:
+            Path: /lifestyle
+            Method: get
+  Nightlife:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - PressRoom
+    - 3SArtspace
+    Properties:
+      Handler: components/Dashboard.lambdaHandler
+      CodeUri: s3://dashmobile-deploy/b99d0c44f585413e4a6b311c50f18a61
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: WidgetCache
+      - LambdaInvokePolicy:
+          FunctionName: '*'
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: WidgetCache
+          DashboardName: Nightlife
+          Function1:
+            Ref: 3SArtspace
+          Function3:
+            Ref: PressRoom
+      Events:
+        BasicCase:
+          Type: Api
+          Properties:
+            Path: /nightlife
+            Method: get
+  PressRoom:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: widgets/PressRoom.lambdaHandler
+      CodeUri: s3://dashmobile-deploy/b99d0c44f585413e4a6b311c50f18a61
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: WidgetCache
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: WidgetCache
+      Events:
+        BasicCase:
+          Type: Api
+          Properties:
+            Path: /pressRoom
+            Method: get
+  3BridgesYoga:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: widgets/3BridgesYoga.lambdaHandler
+      CodeUri: s3://dashmobile-deploy/b99d0c44f585413e4a6b311c50f18a61
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: WidgetCache
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: WidgetCache
+      Events:
+        BasicCase:
+          Type: Api
+          Properties:
+            Path: /3by
+            Method: get
+  BlazeYoga:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: widgets/BlazeYoga.lambdaHandler
+      CodeUri: s3://dashmobile-deploy/b99d0c44f585413e4a6b311c50f18a61
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: WidgetCache
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: WidgetCache
+      Events:
+        BasicCase:
+          Type: Api
+          Properties:
+            Path: /blaze
+            Method: get
+  3SArtspace:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: widgets/3SArtspace.lambdaHandler
+      CodeUri: s3://dashmobile-deploy/b99d0c44f585413e4a6b311c50f18a61
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: WidgetCache
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: WidgetCache
+      Events:
+        BasicCase:
+          Type: Api
+          Properties:
+            Path: /3s
+            Method: get
+  WidgetCache:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: widget-cache

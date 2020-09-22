@@ -38,10 +38,9 @@ class Dashboard {
         return async (event, context) => {
             let result;
             try {
-                console.log('GotHere1 dawg')
                 // result = await this.invokeLambda('3BridgesYoga', "{}");
                 result = await this.scrape();
-                console.log('dashboard lambda handler success', result.map(r => r.header));
+                // console.log('dashboard lambda handler success', result.map(r => r.header));
             } catch (error) {
                 console.log(`lambdahander errored: ${error}`);
                 return context.fail(error);
@@ -70,7 +69,7 @@ class Dashboard {
                 console.log('Local Lambda endabled, using local endpoint');
                 lambda = new aws.Lambda({endpoint:'http://host.docker.internal:3001/'});
             } else {
-                console.log('Local Lambda disabled, not using local endpoint');
+                // console.log('Local Lambda disabled, not using local endpoint');
                 lambda = new aws.Lambda();
             }
 
@@ -82,8 +81,13 @@ class Dashboard {
                     rej(err)
                 } // an error occurred
                 else {
-                    // console.log('Lambda has returned', data);           // successful response
-                    res(JSON.parse(JSON.parse(data.Payload).body));
+                    console.log('Lambda has returned', data.payload);           // successful response
+                    try {
+                        res(JSON.parse(JSON.parse(data.Payload).body));
+                    } catch(e) {
+                        console.log('Lambda response is not json', e, data.payload);
+                    }
+                    
                 }
             });
         });

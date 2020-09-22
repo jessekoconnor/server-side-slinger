@@ -18,10 +18,10 @@ module.exports = class Widget {
                 fetchStart = new Date();
 
             if(cachedData && cachedData.isValid) {
-                console.log(`Returning cached widget `, this.widgetKey);
+                // console.log(`Returning cached widget `, this.widgetKey);
                 return cachedData.doc;
             } else {
-                console.log(`Cache not valid, fetching data... `, this.widgetKey);
+                // console.log(`Cache not valid, fetching data... `, this.widgetKey);
             }
 
             // Otherwise scrape

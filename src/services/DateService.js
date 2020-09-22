@@ -44,8 +44,6 @@ class DateService {
         options.timeZone = 'America/New_York';
         // options.timeZoneName = 'short';
         let timeString = date.toLocaleTimeString('en-US', options);
-        console.log('gotHere0', timeString);
-        console.log('gotHere1', timeString.substr(0,4), timeString.substr(7));
         return timeString.substring(0,4) + timeString.substr(7);
     }
 
@@ -62,7 +60,7 @@ class DateService {
     // 'December 29 2018' => '2018-12-29T00:00:00.000Z'
     // '1:00 AM December 29 2018' => '2018-12-29T06:00:00.000Z'
     stringMDToDate(string) {
-        console.log('stringMDToDate', string);
+        // console.log('stringMDToDate', string);
         let newStr = string,
             newDate;
 
@@ -84,7 +82,7 @@ class DateService {
             newStr += ' ' + 'EST';
         }
 
-        console.log('stringMDToDate2', newStr);
+        // console.log('stringMDToDate2', newStr);
 
         newDate = new Date(newStr);
         if (isNaN(newDate.getTime())) {
