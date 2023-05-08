@@ -85,7 +85,10 @@ class ScraperSSR {
     async getSelection(page, selector, subSelectors) {
         // Base case
         if(!subSelectors) {
-            return this.evaluateElelemt(page, selector);
+            const res = await this.evaluateElelemt(page, selector);
+            // console.log('[Scraper SSR] getSelection debug1', { selector, res })
+
+            return res;
         }
         // Recursion case
         else {
@@ -94,9 +97,13 @@ class ScraperSSR {
 
             // Map primary selections To an array containing all subselections
             // for each primay selection
-            for(let i = 0; i < primaryElements.length;i++) {
-                let elem = primaryElements[i],
+            for(let i = 0; i < 10;i++) {
+            // for(let i = 0; i < primaryElements.length;i++) {
+                    let elem = primaryElements[i],
                     subselections = [];
+
+                    // console.log('[Scraper SSR] getSelection debug recurse', { elem: elem.innerText, subSelectors, len: primaryElements.length })
+
                 // for each subselection
                 for(let j=0;j<subSelectors.length;j++) {
                     let subSel = await this.getSelection(elem, subSelectors[j]);
@@ -122,16 +129,18 @@ class ScraperSSR {
         let pageLoaded = new Date();
         took(startTime, pageLoaded, '-------- Function waitTillPageLoads --------');
 
-        // console.log('[Scraper SSR] run debug', url, primarySelector, subSelectors);
-
         // Wait for first selector before proceeding
         await page.waitFor(primarySelector.primary || primarySelector.query || primarySelector);
 
         // Profile waitFor
         let waitFor = new Date();
         took(pageLoaded, waitFor, '-------- Function waitForSelector --------');
+        
+        // console.log('[Scraper SSR] run debug1', { url, primarySelector, subSelectors });
 
         let result = await this.getSelection(page, primarySelector, subSelectors);
+
+        // console.log('[Scraper SSR] run debug2', { result });
 
         // Profile getSelection
         let getSelection = new Date();
