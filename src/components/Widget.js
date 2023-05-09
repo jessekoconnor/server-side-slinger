@@ -53,7 +53,7 @@ module.exports = class Widget {
             }
         }
 
-        console.log('Scraping Handler: Blaze Yoga formattedEvents: ', JSON.stringify(FormatService.formatResponse(this.header, formattedEvents), null, 2));
+        console.log('Scraping Handler: formattedEvents: ', JSON.stringify(FormatService.formatResponse(this.header, formattedEvents), null, 2));
 
         // Return and cache result
         return FormatService.formatResponse(this.header, formattedEvents);

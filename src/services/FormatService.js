@@ -19,7 +19,7 @@ module.exports = new class FormatService {
         let parsedStartDate = this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringStart))),
             parsedEndDate = dateStringEnd ? this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringEnd))) : undefined;
 
-        // console.log('formatEvent', JSON.stringify({ title, dateStringStart, dateStringEnd, parsedStartDate, parsedEndDate }, null, 2))
+        console.log('formatEvent', JSON.stringify({ title, dateStringStart, dateStringEnd, parsedStartDate, parsedEndDate }, null, 2))
 
         return {
             startDate: parsedStartDate,

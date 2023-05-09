@@ -11,7 +11,9 @@ describe('Widget', () => {
       ScraperSSR,
       res;
 
-  beforeEach(async () => {
+  beforeEach(async function() {
+    this.timeout(20000);
+
     mockScrapingResults = ['MOCK_EVENT1', 'MOCK_EVENT2']
     mockFormatEachEvent = sinon.spy();
     ScraperSSR = require('../../services/ScraperSSR');
@@ -23,7 +25,7 @@ describe('Widget', () => {
       'MOCK_SCRAPING_ARGS', 
       mockFormatEachEvent
     ).scrapeAndCache();
-  })
+  });
 
   afterEach(() => {
     ScraperSSR.scraper.run.restore();

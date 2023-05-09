@@ -14,7 +14,7 @@
     "test": "mocha tests/unit/",
     "tdd": "mocha tests/**/ -w",
     "integration-test": "mocha tests/integration",
-    "load-test": "loadtest -n 10 -c 3 http://localhost:3000/blaze",
+    "load-test": "loadtest -n 10 -c 3 http://localhost:3001/blaze",
     "memory": "du -sh ./*"
   },
   "devDependencies": {

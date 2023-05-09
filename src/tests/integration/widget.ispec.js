@@ -4,148 +4,62 @@ const chai = require('chai');
 const expect = chai.expect;
 let request = require('request');
 
-describe.only('widget tests', () => {
-    let url,
-        res;
+const url = 'http://localhost:3000';
 
-    beforeEach(()=>{
-        url = 'http://localhost:3000';
-    });
+const configs = [
+    {
+        name: 'PressRoom',
+        path: '/pressRoom',
+    },
+    {
+        name: '3s',
+        path: '/3s',
+    },
+    {
+        name: 'Book&Bar',
+        path: '/bookAndBar',
+    }
+];
 
+describe.only('Integration testing suite', () => {
 
-    describe('Widgets', () => {
-        describe('PressRoom', () => {
+    configs.forEach(config => {
+        describe(`Integration testing for widget: ${config.name}`, () => {
+            let fullUrl = url + config.path;
+            let res;
+    
+            before(async function() {
+                this.timeout(20000);
 
-            beforeEach(async ()=>{
-                url += '/pressRoom';
+                res = await getRequest(fullUrl);
+
+                // console.log(`Spec result for ${config.name}:`, res);
             });
-
+    
             it('should return at least 5 results', async () => {
-                res = await getRequest(url);
-                console.log('Spec result for PresRoom: ', res);
                 expect(res.events.length > 5).to.be.true;
-            }).timeout(20000);
-
+            });
+    
             it('should have a header and events (each contain at least rawDate and title)', async () => {
-                res = await getRequest(url);
-                // console.log('Spec result for Blaze: ', res);
                 expect(res.header).to.be.an('object');
                 expect(res.events).to.be.an('array');
                 res.events.forEach(event => {
                     expect(event.title).to.be.an('string');
                     expect(isValidDate(event.startDate)).to.be.true;
                 });
-            }).timeout(20000);
-
-            it.only('should return events that are less than 10 days old', async () => {
-                res = await getRequest(url);
+            });
+    
+            it('should return events that are less than 10 days old', async () => {
                 res.events.forEach(event => {
                     const startTime = new Date(event.startDate);
                     const tenDaysAgo = new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 10));
                     // expect start time to be greater than 10 days ago
-                    console.log(startTime, 'tenDays: ', tenDaysAgo, 'event: ', event, startTime.getTime())
+                    // console.log(startTime, 'tenDays: ', tenDaysAgo, 'event: ', event, startTime.getTime())
                     expect(startTime.getTime()).to.be.greaterThan(tenDaysAgo.getTime());
                 });
-            }).timeout(20000);
-        });
-
-        describe.skip('3 bridges yoga', () => {
-
-            beforeEach(async ()=>{
-                url += '/3by';
-
             });
-
-            it('should return at least 15 results', async () => {
-                res = await getRequest(url);
-                // console.log('Spec result for 3by: ', res);
-                expect(res.events.length > 15).to.be.true;
-            }).timeout(20000);
-
-            it('should have a header and events (each contain at least rawDate and title)', async () => {
-                res = await getRequest(url);
-                // console.log('Spec result for Blaze: ', res);
-                expect(res.header).to.be.an('object');
-                expect(res.events).to.be.an('array');
-                res.events.forEach(event => {
-                    expect(event.title).to.be.an('string');
-                    expect(isValidDate(event.rawDate)).to.be.true;
-                });
-            }).timeout(20000);
-
-            it('should return events that are less than 24 hours old', async () => {
-                res = await getRequest(url);
-                res.events.forEach(event => {
-                    expect(new Date(event.rawDate)).to.be.above(new Date(new Date().getTime() - (1000 * 60 * 60 * 24)));
-                });
-            }).timeout(20000);
         });
-
-        describe.skip('blaze yoga', () => {
-
-            beforeEach(async ()=>{
-                url += '/blaze';
-
-            });
-
-            it('should return at least 15 results', async () => {
-                // console.log('Spec result for Blaze: ', res);
-                res = await getRequest(url);
-                expect(res.events.length > 14).to.be.true;
-            }).timeout(20000);
-
-            it('should have a header and events (each contain at least rawDate and title)', async () => {
-                res = await getRequest(url);
-                // console.log('Spec result for Blaze: ', res);
-                expect(res.header).to.be.an('object');
-                expect(res.events).to.be.an('array');
-                res.events.forEach(event => {
-                    expect(event.title).to.be.an('string');
-                    expect(isValidDate(event.rawDate)).to.be.true;
-                    expect(new Date(event.rawDate)).to.be.above(new Date(new Date().getTime() - (1000 * 60 * 60 * 24)));
-                });
-            }).timeout(20000);
-
-            it('should return events that are less than 24 hours old', async () => {
-                res = await getRequest(url);
-                res.events.forEach(event => {
-                    expect(new Date(event.rawDate)).to.be.above(new Date(new Date().getTime() - (1000 * 60 * 60 * 24)));
-                });
-            }).timeout(20000);
-        });
-
-        describe('3s Artspace', () => {
-
-            beforeEach(async ()=>{
-                url += '/3s';
-
-            });
-
-            it('should return at least 15 results', async () => {
-                res = await getRequest(url);
-                console.log('Spec result for 3s: ', res);
-                expect(res.events.length).to.be.greaterThan(5);
-            }).timeout(20000);
-
-            it('should have a header and events (each contain at least rawDate and title)', async () => {
-                res = await getRequest(url);
-                // console.log('Spec result for Blaze: ', res);
-                expect(res.header).to.be.an('object');
-                expect(res.events).to.be.an('array');
-                res.events.forEach(event => {
-                    expect(event.title).to.be.an('string');
-                    expect(isValidDate(event.startDate)).to.be.true;
-                });
-            }).timeout(20000);
-
-            it('should return events that are less than 24 hours old', async () => {
-                res = await getRequest(url);
-                res.events.forEach(event => {
-                    expect(new Date(event.rawDate)).to.be.above(new Date(new Date().getTime() - (1000 * 60 * 60 * 24)));
-                });
-            }).timeout(20000);
-        });
-    })
+    });
 });
 
 function postRequest(url, payload) {

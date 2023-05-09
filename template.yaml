@@ -155,6 +155,24 @@ Resources:
                     Properties:
                         Path: /3s
                         Method: get
+
+    BookAndBar:
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: widgets/BookAndBar.lambdaHandler
+            CodeUri: src/
+            Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
+            Events:
+                BasicCase:
+                    Type: Api 
+                    Properties:
+                        Path: /bookAndBar
+                        Method: get
     
     # -------------------
     # Caches

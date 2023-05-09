@@ -9,7 +9,7 @@ describe('test chrome', () => {
         res;
 
     beforeEach(()=>{
-        url = 'http://localhost:3000';
+        url = 'http://localhost:3001';
     });
 
     describe('Dashboards', () => {
