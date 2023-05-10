@@ -9,7 +9,7 @@ const subtitle = 'Portsmouth';
 let core = new Widget(key, title, subtitle,
     [
         'https://www.3sarts.org/theater-performances/local-music',
-        'li.calendar-event-music div.calendar-event-details',
+        'div.calendar div.calendar-event-details',
         [
             // Contains title
             'h1',
@@ -18,6 +18,7 @@ let core = new Widget(key, title, subtitle,
         ]
     ],
     async event => {
+        // console.log('3s events!!!!', JSON.stringify({ event }, null, 2));
         return FormatService.formatEvent(event[0], event[1]);
     });    
 

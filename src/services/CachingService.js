@@ -1,7 +1,7 @@
 'use strict';
 
 const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient();
+const dynamo = new AWS.DynamoDB.DocumentClient({ region: process.env.AWS_DEFAULT_REGION });
 const tableName = process.env.TABLE_NAME;
 const createResponse = (statusCode, body) => ({ statusCode, body });
 const disableCache = process.env.DISABLE_WIDGET_CACHE === 'true';
@@ -76,12 +76,14 @@ exports.put = async (id, document) => {
         Item: item
     };
 
+    console.log(`PUT ITEM FOR doc = ${id}`, { params });
+
     try {
         await put(params);
-        console.log(`PUT ITEM SUCCEEDED WITH doc = ${item.id}`);
+        // console.log(`PUT ITEM SUCCEEDED WITH doc = ${item.id}`);
         return createResponse(200, null);
     } catch(err) {
-        console.log(`PUT ITEM FAILED FOR doc = ${item.doc}, WITH ERROR: ${err}`);
+        console.log(`PUT ITEM FAILED FOR doc = ${id}, WITH ERROR: ${err}`);
         return createResponse(500, err);
     }
 };

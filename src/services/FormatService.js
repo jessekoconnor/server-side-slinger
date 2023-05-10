@@ -1,4 +1,4 @@
-const s3Prefix = 'https://s3.amazonaws.com/dashmobile-deploy/img/';
+const s3Prefix = 'https://s3.amazonaws.com/server-side-slinger-public/img/';
 
 module.exports = new class FormatService {
     constructor() {
@@ -14,26 +14,19 @@ module.exports = new class FormatService {
     }
 
     // Format events all in one place
-    formatEvent(title, dateStringStart, dateStringEnd) {
+    formatEvent(title, dateStringStart, dateStringEnd, additionalContext) {
         // Grab raw date nice and easy
-        let rawDateStart = this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringStart))),
-            rawDateEnd = dateStringEnd ? this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringEnd))) : undefined,
-            endTime;
+        let parsedStartDate = this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringStart))),
+            parsedEndDate = dateStringEnd ? this.tryCatch(() => (this.DateService.tryToFormatDate(dateStringEnd))) : undefined;
 
-        if(dateStringEnd) {
-            endTime = this.tryCatch(() => (this.DateService.formatAMPM(rawDateEnd)));
-            if(endTime.startsWith('Caught on')) {
-                endTime = undefined;
-            }
-        }
+        // console.log('formatEvent', JSON.stringify({ title, dateStringStart, dateStringEnd, parsedStartDate, parsedEndDate }, null, 2))
 
         return {
-            rawDate: rawDateStart,
-            rawDateEnd: rawDateEnd, // doesnt list any
-            humanDate: this.tryCatch(() => (this.DateService.dateToString(rawDateStart))),
-            startTime: this.tryCatch(() => (this.DateService.formatAMPM(rawDateStart))),
-            endTime: endTime,
+            startDate: parsedStartDate,
+            endDate: parsedEndDate,
             title: title,
+            context: { title, dateStringStartRaw: dateStringStart, dateStringEndRaw: dateStringEnd, additionalContext },
+            humanReadable: this.DateService.getLocalDateTime({ start: parsedStartDate, end: parsedEndDate }),
         };
     }
 

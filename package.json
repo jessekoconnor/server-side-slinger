@@ -4,22 +4,26 @@
   "description": "This is a sample template for sam-app - Below is a brief explanation of what we have generated for you:",
   "main": "index.js",
   "scripts": {
-    "start-local": "rm -rf ./.aws-sam/build && (sam local start-lambda &) && TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-api",
+    "start-local": "rm -rf ./.aws-sam/build && (sam local start-lambda &) && TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-api 2>&1 | tr \"\r\" \"\n\"",
     "start-local-fast": "rm -rf ./.aws-sam/build && (sam local start-lambda &) && TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=false LOCAL_LAMBDA=true sam local start-api",
     "kill-local": "kill $(ps aux | grep 'sam local' | awk '!/grep/' | awk '{print $2}')",
     "start-local-lambda": "sam local start-lambda",
     "tdd": "cd src && npm run tdd && cd ../",
     "test": "cd src && npm install && npm test && cd ../",
     "integration-test": "cd src && npm run integration-test && cd ../",
-    "sam-validate": "sam validate -t template.yaml --profile personal",
-    "sam-package": "sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket dashmobile-deploy --profile personal",
-    "sam-deploy": "sam deploy --template-file packaged.yaml --stack-name ServerSideScraper --capabilities CAPABILITY_IAM --profile personal",
-    "deploy-code": "npm run integration-test && npm run sam-validate && npm run sam-package && npm run sam-deploy",
-    "deploy-images": "cd img && ./deploy.sh && cd ../"
+    "sam-validate": "sam validate --profile server-side-slinger",
+    "sam-build": "sam build --profile server-side-slinger",
+    "sam-deploy": "sam deploy --profile server-side-slinger --no-confirm-changeset",
+    "deploy-code": "npm t && npm run integration-test && npm run sam-validate && npm run sam-build && npm run sam-deploy",
+    "deploy-images": "cd img && ./deploy.sh && cd ../",
+    "logs": "sam logs --stack-name server-side-slinger --profile server-side-slinger -t"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.754.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.4"
   }
 }
