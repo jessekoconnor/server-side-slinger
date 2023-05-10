@@ -24,7 +24,7 @@ let core = new Widget(key, title, subtitle,
         ],
     ],
     async (element) => {
-        console.log('FoundEvent', JSON.stringify(element, null, 2));
+        // console.log('FoundEvent', JSON.stringify(element, null, 2));
         // // console.log('FoundEvent', element.dateDisplay, element.title);
         // if(!element.dateDisplay) return;
         // // ------

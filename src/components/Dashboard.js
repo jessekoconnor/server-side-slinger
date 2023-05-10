@@ -73,7 +73,7 @@ class Dashboard {
                 lambda = new aws.Lambda();
             }
 
-            console.log(`Invoking lambda function w/ params ${JSON.stringify(params)}`);
+            // console.log(`Invoking lambda function w/ params ${JSON.stringify(params)}`);
 
             lambda.invoke(params, function(err, data) {
                 if (err) {
@@ -81,7 +81,7 @@ class Dashboard {
                     rej(err)
                 } // an error occurred
                 else {
-                    console.log('Lambda has returned', data.payload);           // successful response
+                    // console.log('Lambda has returned', data.payload);           // successful response
                     try {
                         res(JSON.parse(JSON.parse(data.Payload).body));
                     } catch(e) {

@@ -2,8 +2,8 @@
 const FormatService = require('../services/FormatService');
 const Widget = require('../components/Widget');
 
-const key = '3SArtspace';
-const title = '3SArtspace';
+const key = 'BookAndBar';
+const title = 'Book & Bar';
 const subtitle = 'Portsmouth';
 
 let core = new Widget(key, title, subtitle,
@@ -22,7 +22,7 @@ let core = new Widget(key, title, subtitle,
         ]
     ],
     async event => {
-        console.log('BookAndBar events!!!!', JSON.stringify({ event }, null, 2));
+        // console.log('BookAndBar events!!!!', JSON.stringify({ event }, null, 2));
 
         let title = event[0];
         let subTitle = event[1];

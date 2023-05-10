@@ -11,11 +11,12 @@
     "tdd": "cd src && npm run tdd && cd ../",
     "test": "cd src && npm install && npm test && cd ../",
     "integration-test": "cd src && npm run integration-test && cd ../",
-    "sam-validate": "sam validate -t template.yaml --profile server-side-slinger",
-    "sam-package": "sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket dashmobile-deploy --profile server-side-slinger",
-    "sam-deploy": "sam deploy --template-file packaged.yaml --stack-name ServerSideScraper --capabilities CAPABILITY_IAM --profile server-side-slinger",
-    "deploy-code": "npm t && npm run integration-test && npm run sam-validate && npm run sam-package && npm run sam-deploy",
-    "deploy-images": "cd img && ./deploy.sh && cd ../"
+    "sam-validate": "sam validate --profile server-side-slinger",
+    "sam-build": "sam build --profile server-side-slinger",
+    "sam-deploy": "sam deploy --profile server-side-slinger --no-confirm-changeset",
+    "deploy-code": "npm t && npm run integration-test && npm run sam-validate && npm run sam-build && npm run sam-deploy",
+    "deploy-images": "cd img && ./deploy.sh && cd ../",
+    "logs": "sam logs --stack-name server-side-slinger --profile server-side-slinger -t"
   },
   "author": "",
   "license": "ISC",

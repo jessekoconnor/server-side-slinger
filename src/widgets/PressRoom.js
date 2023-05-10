@@ -33,7 +33,6 @@ let core = new Widget(key, title, subtitle,
     async event => {
         if(!event[0] || !event[1]) return;
         
-        // console.log('Hello123!!!!', JSON.stringify({ event }, null, 2));
         const title = event[0];
         let dateString = event[1];
 
@@ -44,7 +43,7 @@ let core = new Widget(key, title, subtitle,
             dateString = dateString.substring(0, pipeIndex);
         }
 
-        console.log('Hello456!!!!', JSON.stringify({ title, dateString }, null, 2));
+        // console.log('Hello456!!!!', JSON.stringify({ title, dateString }, null, 2));
 
         return FormatService.formatEvent(title, dateString);
     });

@@ -1,5 +1,10 @@
 .idea
 img/dist
+.DS_Store
+node_modules
+dist
+src/node_modules
+.aws-sam
 
 # Created by https://www.gitignore.io/api/osx,node,linux,windows
 

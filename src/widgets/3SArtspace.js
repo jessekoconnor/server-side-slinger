@@ -18,7 +18,7 @@ let core = new Widget(key, title, subtitle,
         ]
     ],
     async event => {
-        console.log('3s events!!!!', JSON.stringify({ event }, null, 2));
+        // console.log('3s events!!!!', JSON.stringify({ event }, null, 2));
         return FormatService.formatEvent(event[0], event[1]);
     });    
 

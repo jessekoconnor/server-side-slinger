@@ -21,7 +21,7 @@ const configs = [
     }
 ];
 
-describe.only('Integration testing suite', () => {
+describe('Integration testing suite for widgets', () => {
 
     configs.forEach(config => {
         describe(`Integration testing for widget: ${config.name}`, () => {

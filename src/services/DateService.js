@@ -30,9 +30,9 @@ class DateService {
             for(let i = 0; i < strategies.length; i++) {
                 let strategy = strategies[i];
                 safeString = strategy.func(safeString);
-                console.log('tryToFormatDate1', { strategy: strategy.name, splitStr, safeString, isValidDate: this.isValidDate(safeString) });
+                // console.log('tryToFormatDate1', { strategy: strategy.name, splitStr, safeString, isValidDate: this.isValidDate(safeString) });
             }
-            console.log('tryToFormatDate2', { safeString, isValidDate: this.isValidDate(safeString) });
+            // console.log('tryToFormatDate2', { safeString, isValidDate: this.isValidDate(safeString) });
             if (this.isValidDate(safeString)) {
                 return new Date(safeString);
             }
@@ -45,17 +45,9 @@ class DateService {
     splitStringBySpecialChars(dateStr) {
         let trimmedDateStr = dateStr.trim();
         let splitStr = trimmedDateStr.split(/[\|]/);
-        console.log('splitStringBySpecialChars', { trimmedDateStr, splitStr });
+        // console.log('splitStringBySpecialChars', { trimmedDateStr, splitStr });
         return splitStr;
     }
-
-    // // Create a date from a string, most basic strategy
-    // createDateFromStrBasic = (dateStr, timeZone = 'EDT') => {
-    //     let str = dateStr.trim();
-    //     if (!this.hasTimeZone(dateStr)) str = `${str} ${timeZone}`;
-    //     console.log('createDateFromStrBasic', str)
-    //     return new Date(str);
-    // }
 
     // Break down down into parts and create a date
     getLocalDateTime({ start, end }) {
@@ -120,7 +112,7 @@ class DateService {
         return false;
     }
     ensureTimeZone(dateStr) {
-        console.log('ensureTimeZone', dateStr, this)
+        // console.log('ensureTimeZone', dateStr, this)
         if (!this.hasTimeZone(dateStr)) {
             return `${dateStr} EDT`;
         }

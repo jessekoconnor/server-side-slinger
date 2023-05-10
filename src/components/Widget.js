@@ -31,7 +31,7 @@ module.exports = class Widget {
             scrapingResult.timeTaken = new Date().getTime() - fetchStart.getTime();
 
             // and then cache result
-            // await CachingService.put(this.widgetKey, scrapingResult);
+            await CachingService.put(this.widgetKey, scrapingResult);
 
             console.log(`Scrape And Cache SUCCESS FOR id = ${this.widgetKey}, WITH RESULT: ${JSON.stringify(scrapingResult, null, 2)}`);
             return scrapingResult;
@@ -42,7 +42,7 @@ module.exports = class Widget {
 
     async scrapeAway(scrapingArgs, formatEachEvent) {
         let events = await ScraperSSR.scraper.run(...scrapingArgs);
-        console.log('Scraping Handler: Blaze Yoga scraper returns: ', JSON.stringify(events, null, 2));
+        // console.log('Scraping Handler: ', JSON.stringify(events, null, 2));
 
         // Format each event
         let formattedEvents = [];
@@ -52,8 +52,6 @@ module.exports = class Widget {
                 formattedEvents.push(formattedEvent);
             }
         }
-
-        console.log('Scraping Handler: formattedEvents: ', JSON.stringify(FormatService.formatResponse(this.header, formattedEvents), null, 2));
 
         // Return and cache result
         return FormatService.formatResponse(this.header, formattedEvents);

@@ -16,8 +16,8 @@ Globals:
                 DISABLE_WIDGET_CACHE: false
                 LOCAL_LAMBDA: false
         CodeUri: src/
-        Runtime: nodejs16.x
-        MemorySize: 128000
+        Runtime: nodejs14.x
+        MemorySize: 1600
         Timeout: 30
 
 Resources:
@@ -68,12 +68,13 @@ Resources:
                     TABLE_NAME: !Ref WidgetCache
                     DashboardName: "Nightlife"
                     Function1: !Ref 3SArtspace
+                    Function2: !Ref BookAndBar
                     Function3: !Ref PressRoom
             Events:
                 BasicCase:
                     Type: Api 
                     Properties:
-                        Path: /nightlife
+                        Path: /nightLife
                         Method: get
  
     # -------------------
