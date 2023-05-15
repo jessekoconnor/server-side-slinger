@@ -154,11 +154,6 @@ class DateService {
             }
         }
         return newStr;
-        // // Turn 7:30pm into 7:30 pm
-        // let newStr = dateStr.replace(/([\d]:\d\d?)([am|pm|AM|PM])/, ' $1:00 $2');
-        // // // Turn 9pm into 9:00 pm
-        // newStr = newStr.replace(/\s?(\d\d?)([am|pm|AM|PM])/, ' $1:00 $2');
-        // return newStr;
     }
 
     ensureSymbolsRemoved(dateStr) {
