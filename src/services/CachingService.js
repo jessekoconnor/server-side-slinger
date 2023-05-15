@@ -76,7 +76,7 @@ exports.put = async (id, document) => {
         Item: item
     };
 
-    console.log(`PUT ITEM FOR doc = ${id}`, { params });
+    // console.log(`PUT ITEM FOR doc = ${id}`, { params });
 
     try {
         await put(params);

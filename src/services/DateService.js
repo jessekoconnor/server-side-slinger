@@ -17,7 +17,7 @@ class DateService {
         const strategies = [
             { name: 'ensureTimeZone', func: this.ensureTimeZone.bind(this) },
             { name: 'ensureYear', func: this.ensureYear.bind(this) },
-            { name: 'ensureHoursExpanded', func: this.ensureHoursExpanded.bind(this) },
+            { name: 'ensureAMPMformat', func: this.ensureAMPMformat.bind(this) },
             { name: 'ensureSymbolsRemoved', func: this.ensureSymbolsRemoved.bind(this) },
         ];
 
@@ -127,11 +127,32 @@ class DateService {
         return dateStr;
     }
 
-    ensureHoursExpanded(dateStr) {
-        // Turn 7:30pm into 7:30 pm
-        let newStr = dateStr.replace(/([\d]:\d\d?)([am|pm|AM|PM])/, ' $1:00 $2');
-        // // Turn 9pm into 9:00 pm
-        newStr = newStr.replace(/\s?(\d\d?)([am|pm|AM|PM])/, ' $1:00 $2');
+    ensureAMPMformat(dateStr) {
+        let newStr = dateStr;
+        let matched = false;
+        const toTry = [
+            // Turn 7:30pm into 7:30 pm
+            // Turn 10:30pm into 10:30 pm
+            {
+                name: 'HoursMins am/pm expander',
+                search: /(\d\d?:\d\d?)([am|pm|AM|PM])/,
+                return: '$1 $2',
+            },
+            // Turn 9pm into 9:00 pm
+            {
+                name: 'HoursOnly am/pm expander',
+                search: /(\d\d?)([am|pm|AM|PM])/,
+                return: '$1:00 $2',
+            }
+        ];
+        for(let i = 0; i < toTry.length; i++) {
+            let tryThis = toTry[i];
+            // console.log('ensureAMPMformat', { tryThis, startStr: dateStr, matches: dateStr.match(tryThis.search), afterIfMatches: dateStr.replace(tryThis.search, tryThis.return) });
+            if (dateStr.match(tryThis.search)) {
+                newStr = dateStr.replace(tryThis.search, tryThis.return);
+                break;
+            }
+        }
         return newStr;
     }
 
