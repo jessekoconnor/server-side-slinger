@@ -18,10 +18,10 @@ module.exports = class Widget {
                 fetchStart = new Date();
 
             if(cachedData && cachedData.isValid) {
-                // console.log(`Returning cached widget `, this.widgetKey);
+                console.log(`Returning cached widget `, this.widgetKey);
                 return cachedData.doc;
             } else {
-                // console.log(`Cache not valid, fetching data... `, this.widgetKey);
+                console.log(`Cache not valid, fetching data... `, this.widgetKey);
             }
 
             // Otherwise scrape
@@ -33,7 +33,7 @@ module.exports = class Widget {
             // and then cache result
             await CachingService.put(this.widgetKey, scrapingResult);
 
-            console.log(`Scrape And Cache SUCCESS FOR id = ${this.widgetKey}, WITH RESULT: ${JSON.stringify(scrapingResult, null, 2)}`);
+            // console.log(`Scrape And Cache SUCCESS FOR id = ${this.widgetKey}, WITH RESULT: ${JSON.stringify(scrapingResult, null, 2)}`);
             return scrapingResult;
         } catch(err) {
             console.log(`Scrape And Cache FAILED FOR id = ${this.widgetKey}, WITH ERROR: ${err}`);

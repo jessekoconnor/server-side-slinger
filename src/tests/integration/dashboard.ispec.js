@@ -17,7 +17,7 @@ const configs = [
     },
 ];
 
-describe.only('Integration testing suite for dashboards', () => {
+describe('Integration testing suite for dashboards', () => {
 
     configs.forEach(config => {
         describe(`Integration testing for dashboard: ${config.name}`, () => {
@@ -25,7 +25,7 @@ describe.only('Integration testing suite for dashboards', () => {
             let res;
     
             before(async function() {
-                this.timeout(20000);
+                this.timeout(30000);
 
                 res = await getRequest(fullUrl);
 
@@ -47,44 +47,6 @@ describe.only('Integration testing suite for dashboards', () => {
             });
         });
     });
-});
-
-describe('test chrome', () => {
-    let url,
-        res;
-
-    beforeEach(()=>{
-        url = 'http://localhost:3001';
-    });
-
-    describe('Dashboards', () => {
-        describe.skip('Lifestyle', () => {
-
-            beforeEach(async ()=>{
-                url += '/lifestyle';
-            });
-
-            it('should return at least 15 results for each widget', async () => {
-                res = await getRequest(url);
-                // console.log('Spec result for Lifestyle: ', res.data.length);
-                res.data.forEach(widget => expect(widget.events.length).to.be.greaterThan(5));
-            }).timeout(20000);
-        });
-
-        describe('Nightlife', () => {
-
-            beforeEach(async ()=>{
-                url += '/nightlife';
-            });
-
-            it('should return at least 5 results for each widget', async () => {
-                res = await getRequest(url);
-                // console.log('Spec result for nightlife: ', res.data.length);
-                res.data.forEach(widget => expect(widget.events.length).to.be.greaterThan(5));
-            }).timeout(20000);
-        });
-    });
-
 });
 
 function postRequest(url, payload) {

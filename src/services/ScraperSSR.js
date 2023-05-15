@@ -53,7 +53,7 @@ class ScraperSSR {
 
             return page;
         } catch (error) {
-            console.log('could not load page: ', error);
+            console.log('could not load page: ', { error, url });
         }
     }
 
@@ -63,6 +63,11 @@ class ScraperSSR {
 
     // Extract data from an element
     async evaluateElelemt(page, selector) {
+        // console.log('[Scraper SSR] evaluateElelemt', { selector, pageIsDefined: !!page });
+        if (!page) {
+            console.trace('page is not defined', { page, selector });
+            return;
+        }
         if(typeof selector === 'string') {
             return await page.$$eval(selector, async nodes => {
                 if(nodes.length === 1) return nodes[0].innerText;
@@ -97,7 +102,7 @@ class ScraperSSR {
 
             // Map primary selections To an array containing all subselections
             // for each primay selection
-            for(let i = 0; i < 10;i++) {
+            for(let i = 0; i < primaryElements.length;i++) {
             // for(let i = 0; i < primaryElements.length;i++) {
                     let elem = primaryElements[i],
                     subselections = [];
@@ -124,6 +129,11 @@ class ScraperSSR {
         took(loadTime, startTime, '-------- Lambda loading --------');
 
         let page = await this.waitTillPageLoads(url);
+
+        if (!page) {
+            console.trace('Page is not defined!!', { page, url, primarySelector, subSelectors });
+            return;
+        }
 
         // Profile pageLoad
         let pageLoaded = new Date();
