@@ -19,7 +19,11 @@ const configs = [
     {
         name: 'Book&Bar',
         path: '/bookAndBar',
-    }
+    },
+    {
+        name: 'The Music Hall',
+        path: '/theMusicHall',
+    },
 ];
 
 describe('Integration testing suite for widgets', () => {

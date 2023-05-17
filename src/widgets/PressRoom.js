@@ -22,6 +22,7 @@ let core = new Widget({
             ],
         },
         postProcessing: event => {
+            // console.log('PressRoom events!!!!', JSON.stringify({ event }, null, 2));
             if(!event[0] || !event[1]) return;
             
             const title = event[0];

@@ -41,10 +41,12 @@ module.exports = new class FormatService {
     }
 
     formatResponse(header, data) {
+        const needToFlatten = data && data.length && data[0].length;
+        const events = needToFlatten ? data.reduce((acc, val) => acc.concat(val), []) : data;
         return {
             header: header,
-            events: data,
-            eventCount: data.length,
+            events,
+            eventCount: events.length,
         }
     }
 }

@@ -6,41 +6,103 @@ const key = 'BookAndBar';
 const title = 'Book & Bar';
 const subtitle = 'Portsmouth';
 
+
+const flattenArraysOfArrays = (_events) => {
+    return _events.reduce((acc, curr) => {
+        return acc.concat(curr);
+    }, []);
+};
+
 let core = new Widget(
     {
         key,
         title,
         subtitle,
         config: {
-            url: 'https://www.bookandbar.com/events-upcoming#/events',
+            url: 'https://www.themusichall.org/calendar/?exclude=&month=2023-06',
             query: {
-                val: 'div.events-container div.event-card',
+                val: 'div.day--has-events',
                 query: [
-                    // Contains title
-                    'div.event-name',
-                    // Contains subTitle
-                    'div.support',
-                    // date
-                    'span.date',
-                    // time
-                    'span.time',
+                    // month
+                    'span.day__month',
+                    // day
+                    'span.day__number',
+                    {
+                        val: 'li.xdgp_genre-music',
+                        query: [
+                            // title
+                            'p.event__title',
+                            // time
+                            'section.action__time'
+                        ]
+                    },
                 ],
             },
             postProcessing: event => {
-                console.log('BookAndBar events!!!!', JSON.stringify({ event }, null, 2));
-    
-                let title = event[0];
-                let subTitle = event[1];
-                // append subtitle
-                if (subTitle) {
-                    title += ` - ${subTitle}`;
-                };
-    
-                const startDate = event[2];
-                const startTime = event[3];
-                const startDateAndTime = `${startDate} ${startTime}`;
-    
-                return FormatService.formatEvent(title, startDateAndTime, null, { title, subTitle, startDate, startTime });
+                console.log('Music Hall events!!!!', JSON.stringify({ event }, null, 2));
+
+                const [ month, day, _titlesAndTimes ] = event;
+                if (!month || !day || !_titlesAndTimes?.length) return;
+
+                const dataToFormat = [];
+                const dataIfArrayOfStrings = [];
+                
+                // Array could be strings or array of strings
+                let dataIsArrayOfArrays = false;
+                _titlesAndTimes.forEach(_titleAndOrTime => {
+                    if (Array.isArray(_titleAndOrTime)) {
+                        dataIsArrayOfArrays = true;
+                        const [ title, time ] = _titleAndOrTime;
+                        console.log('Music Hall events!!!! -- array', JSON.stringify({ title, time, month, day, _titleAndOrTime }, null, 2));
+                        dataToFormat.push({ title, time, month, day });
+                    }
+                    else {
+                        dataIfArrayOfStrings.push(_titleAndOrTime);
+                        console.log('Music Hall events!!!! - non array', JSON.stringify({  _titleAndOrTime }, null, 2));
+                    }
+                });
+
+                if (!dataIsArrayOfArrays) {
+                    const [ title, time ] = dataIfArrayOfStrings;
+                    dataToFormat.push({ title, time, month, day });
+                }
+
+                console.log('Music Hall events!!!!', JSON.stringify({ dataToFormat, dataIsArrayOfArrays }, null, 2));
+
+                return dataToFormat.map(({ title, time, month, day }) => {
+                    const dateAndTime = `${month} ${day} ${time}`;
+                    return FormatService.formatEvent(title, dateAndTime, null, { title, time, month, day, dateAndTime });
+                });
+
+
+                // const parsedTitlesAndTimes = parseEventArray(musicEvents);
+
+
+                // parsedTitlesAndTimes.forEach(parsedMusicEvent => {
+                //     const [ title, time ] = parsedMusicEvent;
+
+                // });
+
+
+                // for(let i = 0; i < musicEvents.length; i++) {
+                //     const musicEvent = musicEvents[i];
+
+                //     if (!title || !time) {
+                //         console.error('Music Hall event is missing time/title', JSON.stringify({ title, time }, null, 2));
+                //         return;
+                //     }
+
+                //     if (Array.isArray(time)) time = time[0];
+                    
+                //     const dateAndTime = `${month} ${day} ${time}`;
+                    
+                //     const parsedEvent = FormatService.formatEvent(title, dateAndTime, null, { title, time, month, day, dateAndTime });
+
+
+                //     parsedEvents.push(parsedEvent);
+                // };
+
+                // return parsedEvents;
             },
         },
     }

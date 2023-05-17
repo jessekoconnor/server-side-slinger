@@ -79,7 +79,7 @@ class ScraperSSR {
     // Extract data from an element
     async evaluateElelemt(page, _selector) {
         const selector = _selector.query || _selector;
-        // console.log('[Scraper SSR] evaluateElelemt', { selector, pageIsDefined: !!page });
+        // console.log('[Scraper SSR] evaluateElelemt', { selectorType: typeof selector, pageIsDefined: !!page });
         if (!page) {
             console.trace('page is not defined', { page, selector });
             return;
@@ -90,50 +90,52 @@ class ScraperSSR {
 
     // Turn pages and selectors into data
     async getSelection(page, query) {
-        // console.log('[Scraper SSR] getSelection debug', { query, pageIsDefined: !!page })
-        const queryVal = query.val || query;
-        const queryVals = Array.isArray(queryVal) ? queryVal : [queryVal];
+        const queries = Array.isArray(query) ? query : [query];
+        
+        // console.log('[Scraper SSR] getSelection top level', { query, pageIsDefined: !!page })
+        const baseCaseResults = [];
+        let recursionResults = [];
 
-        // Base case
-        if(!query.query) {
-            // console.log('[Scraper SSR] getSelection debug1', { queryVals })
+        for(let i = 0; i < queries.length; i++) {
+            const curQuery = queries[i];
+            const queryVal = curQuery.val || curQuery;
 
-            const res = [];
-            for(let i = 0; i < queryVals.length;i++) {
-                const curQueryVal = queryVals[i];
-                // console.log('[Scraper SSR] getSelection debug1.1', { curQueryVal, pageIsDefined: !!page, pageText: page.innerText })
+            // Base case
+            if(!curQuery.query) {
+                // console.log('[Scraper SSR] getSelection basecase1', { queryVals })
 
-                res.push(this.evaluateElelemt(page, curQueryVal));
+                // console.log('[Scraper SSR] getSelection basecase1.1', { curQuery, pageIsDefined: !!page, pageText: page.innerText })
+
+                const res = await this.evaluateElelemt(page, curQuery);
+                baseCaseResults.push(res);
+
+                // console.log('[Scraper SSR] getSelection basecase2', { queries, res })
             }
-
-            // console.log('[Scraper SSR] getSelection debug2', { queryVals, res })
-
-            return Promise.all(res);
-        }
-        // Recursion case
-        else {
-            let masterResult = [];
-            
-            // Loop through all of the queries
-            for(let i = 0; i < queryVals.length;i++) {
-                const queryVal = queryVals[i].val || queryVals[i];
+            // Recursion case
+            else {
                 let primaryElements = await page.$$(queryVal);
 
                 // Process each matching element
                 for(let i = 0; i < primaryElements.length;i++) {
+                // for(let i = 0; i < 1;i++) {
                     let elem = primaryElements[i];
 
                     // console.log('[Scraper SSR] getSelection debug recurse', { elem: elem.innerText, queryVal, len: primaryElements.length, i })
 
-                    let recursionResult = this.getSelection(elem, query.query);
+                    let recursionResult = await this.getSelection(elem, curQuery.query);
+
+                    // console.log('[Scraper SSR] getSelection debug recurse2', { elem: elem.innerText, recursionResult, len: primaryElements.length, i })
 
                     // console.log('[Scraper SSR] getSelection debug recursion popping', { elem: elem.innerText, queryVal, len: primaryElements.length, i, recursionResult })
 
-                    masterResult.push(recursionResult);
+                    recursionResults.push(recursionResult);
                 }
             };
-            return Promise.all(masterResult);
         }
+
+        // console.log('[Scraper SSR] getSelection debug recursionResults', { recursionResults, baseCaseResults })
+
+        return [...baseCaseResults, ...recursionResults];
     }
 
     // Main Method
