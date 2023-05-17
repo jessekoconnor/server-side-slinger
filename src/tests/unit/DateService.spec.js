@@ -61,6 +61,12 @@ describe('Date Service', () => {
       let rawString = 'JUNE 3 @ 10:30PM ';
       expect(DateService.tryToFormatDate(rawString).toISOString()).to.be.equal('2023-06-04T02:30:00.000Z')
     });
+
+    // JUNE 9 @ 1030PM
+    it('should handle less parsable human date w/ @ symbol on june 3 at 10:30PM', () => {
+      let rawString = 'JUNE 9 @ 1030PM ';
+      expect(DateService.tryToFormatDate(rawString).toISOString()).to.be.equal('2023-06-10T02:30:00.000Z')
+    });
   });
 
   describe('inPast', () => {
