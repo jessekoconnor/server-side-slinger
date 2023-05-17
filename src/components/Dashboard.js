@@ -88,14 +88,14 @@ class Dashboard {
                 } // an error occurred
                 else {
                     // console.log('Lambda has returned', data.payload);           // successful response
+                    let parsedData;
                     try {
                         const parsedRes = JSON.parse(JSON.parse(data.Payload).body);
-                        return CachingService.put(functName, parsedRes).finally(() => {
-                            // console.log(`DASH -- Cached widget `, functName, parsedRes);
-                            return res(parsedRes);
-                        });
+                        await CachingService.put(functName, parsedRes);
+                        return res(parsedRes);
                     } catch(e) {
                         console.error('Lambda response is not json', e, data.payload);
+                        return res(parsedRes);
                     }
                     
                 }
