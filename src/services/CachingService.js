@@ -77,19 +77,19 @@ exports.put = async (id, document) => {
         Item: item
     };
 
-    // console.log(`PUT ITEM FOR doc = ${id}`, { params });
+    console.log(`PUT ITEM FOR doc = ${id}`, JSON.stringify({ document }, null, 2));
 
     const events = document.events;
     const eventsLength = events.length;
 
     if (!allEventsAreNew(events, 10)) {
         console.error('Events are too old, not caching', { id });
-        return createResponse(500, 'Events are too old, not caching');
+        throw createResponse(500, 'Events are too old, not caching');
     }
 
-    if  (eventsLength < 5) {
+    if (eventsLength < 5) {
         console.error('Not enough events, not caching', { id });
-        return createResponse(500, 'Not enough events, not caching');
+        throw createResponse(500, 'Not enough events, not caching');
     }
 
     try {
@@ -98,7 +98,7 @@ exports.put = async (id, document) => {
         return createResponse(200, null);
     } catch(err) {
         console.log(`PUT ITEM FAILED FOR doc = ${id}, WITH ERROR: ${err}`);
-        return createResponse(500, err);
+        throw createResponse(500, err);
     }
 };
 

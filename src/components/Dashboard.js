@@ -88,10 +88,9 @@ class Dashboard {
                 } // an error occurred
                 else {
                     // console.log('Lambda has returned', data.payload);           // successful response
-                    let parsedData;
+                    let parsedRes;
                     try {
-                        const parsedRes = JSON.parse(JSON.parse(data.Payload).body);
-                        await CachingService.put(functName, parsedRes);
+                        parsedRes = JSON.parse(JSON.parse(data.Payload).body);
                         return res(parsedRes);
                     } catch(e) {
                         console.error('Lambda response is not json', e, data.payload);
@@ -124,7 +123,7 @@ class Dashboard {
         let params = {
             FunctionName: functName,
             // LogType: 'Tail',
-            Payload: "{}"
+            Payload: JSON.stringify({ cacheKey: functName }),
         };
         return this.invokeLambdaAndCache({ lambda, params, cachedData, start });
     }
