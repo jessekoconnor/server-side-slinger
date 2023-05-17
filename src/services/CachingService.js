@@ -18,8 +18,8 @@ function oneDayYoung(date) {
 exports.getWidget = async(id) => {
     try {
         // Disable cache if parameter override
-        if(disableCache) {
-            console.log('CACHING IS DISABLED, RETURNING', disableCache);
+        if (disableCache) {
+            console.log('CACHING IS DISABLED, RETURNING', { disableCache, processEnvVar: process.env.DISABLE_WIDGET_CACHE });
             return;
         }
 
@@ -40,14 +40,13 @@ exports.getWidget = async(id) => {
 };
 
 exports.get = async (id) => {
+    let params = {
+        TableName: tableName,
+        Key: {
+            id: id
+        }
+    };
     try {
-        let params = {
-            TableName: tableName,
-            Key: {
-                id: id
-            }
-        };
-
         let data = await dynamo.get(params).promise();
         // console.log('*** Success Response from Dynamo*****', Object.keys(data));
         return data.Item;

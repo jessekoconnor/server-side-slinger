@@ -27,7 +27,7 @@ let core = new Widget(
                 ],
             },
             postProcessing: event => {
-                // console.log('BookAndBar events!!!!', JSON.stringify({ event }, null, 2));
+                console.log('BookAndBar events!!!!', JSON.stringify({ event }, null, 2));
     
                 let title = event[0];
                 let subTitle = event[1];
