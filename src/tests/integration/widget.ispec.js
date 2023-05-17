@@ -8,40 +8,51 @@ let { allEventsAreLessThanXDaysOld } = require('../../helpers/timer');
 const url = 'http://localhost:3000';
 
 const configs = [
-    // {
-    //     name: 'Lifestyle',
-    //     path: '/lifeStyle',
-    // },
     {
-        name: 'nightLife',
-        path: '/nightLife',
+        name: 'PressRoom',
+        path: '/pressRoom',
     },
+    {
+        name: '3s',
+        path: '/3s',
+    },
+    {
+        name: 'Book&Bar',
+        path: '/bookAndBar',
+    }
 ];
 
-describe('Integration testing suite for dashboards', () => {
+describe('Integration testing suite for widgets', () => {
 
     configs.forEach(config => {
-        describe(`Integration testing for dashboard: ${config.name}`, () => {
+        describe(`Integration testing for widget: ${config.name}`, () => {
             let fullUrl = url + config.path;
             let res;
     
             before(async function() {
-                this.timeout(35000);
+                this.timeout(20000);
                 this.retries(3);
 
                 res = await getRequest(fullUrl);
 
                 // console.log(`Spec result for ${config.name}:`, res);
             });
-
-            it('should return at least 5 results for each widget', async () => {
-                res.data.forEach(widget => expect(widget.events.length).to.be.greaterThan(5));
+    
+            it('should return at least 5 results', async () => {
+                expect(res.events.length > 5).to.be.true;
             });
-
-            it('should return events that are less than 10 days old', async () => {
-                res.data.forEach(widget => {
-                    return allEventsAreLessThanXDaysOld(widget.events, 10);
+    
+            it('should have a header and events (each contain at least rawDate and title)', async () => {
+                expect(res.header).to.be.an('object');
+                expect(res.events).to.be.an('array');
+                res.events.forEach(event => {
+                    expect(event.title).to.be.an('string');
+                    expect(isValidDate(event.startDate)).to.be.true;
                 });
+            });
+    
+            it('should return events that are less than 10 days old', async () => {
+                return allEventsAreLessThanXDaysOld(res.events, 10);
             });
         });
     });

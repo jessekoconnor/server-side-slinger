@@ -40,7 +40,7 @@ describe('Widget', () => {
   it('should call the scrapperSSR\'s run method', async () => {
     expect(ScraperSSR.scraper.run.called).to.be.true;
   })
-    
+
   it('should call the formatting event for each returned event', async () => {
     mockScrapingResults.forEach(data => {
       expect(mockFormatEachEvent.calledWith(data)).to.be.true;
