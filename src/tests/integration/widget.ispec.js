@@ -3,7 +3,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 let request = require('request');
-let { allEventsAreLessThanXDaysOld } = require('../../helpers/timer');
+let { allEventsAreNew } = require('../../helpers/timer');
 
 const url = 'http://localhost:3000';
 
@@ -34,7 +34,7 @@ describe('Integration testing suite for widgets', () => {
             let res;
     
             before(async function() {
-                this.timeout(20000);
+                this.timeout(35000);
                 this.retries(3);
 
                 res = await getRequest(fullUrl);
@@ -56,7 +56,7 @@ describe('Integration testing suite for widgets', () => {
             });
     
             it('should return events that are less than 10 days old', async () => {
-                return allEventsAreLessThanXDaysOld(res.events, 10);
+                expect(allEventsAreNew(res.events, 10)).to.be.true;
             });
         });
     });

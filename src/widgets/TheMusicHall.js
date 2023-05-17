@@ -6,13 +6,6 @@ const key = 'BookAndBar';
 const title = 'Book & Bar';
 const subtitle = 'Portsmouth';
 
-
-const flattenArraysOfArrays = (_events) => {
-    return _events.reduce((acc, curr) => {
-        return acc.concat(curr);
-    }, []);
-};
-
 let core = new Widget(
     {
         key,
@@ -47,66 +40,39 @@ let core = new Widget(
                 const dataToFormat = [];
                 const dataIfArrayOfStrings = [];
                 
-                // Array could be strings or array of strings
+                // Could be array of arrays or array of strings
                 let dataIsArrayOfArrays = false;
                 _titlesAndTimes.forEach(_titleAndOrTime => {
                     if (Array.isArray(_titleAndOrTime)) {
+                        // this day has multiple events
                         dataIsArrayOfArrays = true;
                         const [ title, time ] = _titleAndOrTime;
-                        console.log('Music Hall events!!!! -- array', JSON.stringify({ title, time, month, day, _titleAndOrTime }, null, 2));
+                        // console.log('Music Hall events!!!! -- array', JSON.stringify({ title, time, month, day, _titleAndOrTime }, null, 2));
                         dataToFormat.push({ title, time, month, day });
                     }
                     else {
                         dataIfArrayOfStrings.push(_titleAndOrTime);
-                        console.log('Music Hall events!!!! - non array', JSON.stringify({  _titleAndOrTime }, null, 2));
+                        // console.log('Music Hall events!!!! - non array', JSON.stringify({  _titleAndOrTime }, null, 2));
                     }
                 });
 
+                // If not array of arrays, then it's an array of strings and we need to grab the fields to format a single event
                 if (!dataIsArrayOfArrays) {
                     const [ title, time ] = dataIfArrayOfStrings;
                     dataToFormat.push({ title, time, month, day });
                 }
 
-                console.log('Music Hall events!!!!', JSON.stringify({ dataToFormat, dataIsArrayOfArrays }, null, 2));
+                // console.log('Music Hall events!!!!', JSON.stringify({ dataToFormat, dataIsArrayOfArrays }, null, 2));
 
+                // Because this could be multiple events in one day, we need to format each one
                 return dataToFormat.map(({ title, time, month, day }) => {
                     const dateAndTime = `${month} ${day} ${time}`;
-                    return FormatService.formatEvent(title, dateAndTime, null, { title, time, month, day, dateAndTime });
+                    return FormatService.formatEvent(title, dateAndTime, null, { title, time, month, day, dataToFormat });
                 });
-
-
-                // const parsedTitlesAndTimes = parseEventArray(musicEvents);
-
-
-                // parsedTitlesAndTimes.forEach(parsedMusicEvent => {
-                //     const [ title, time ] = parsedMusicEvent;
-
-                // });
-
-
-                // for(let i = 0; i < musicEvents.length; i++) {
-                //     const musicEvent = musicEvents[i];
-
-                //     if (!title || !time) {
-                //         console.error('Music Hall event is missing time/title', JSON.stringify({ title, time }, null, 2));
-                //         return;
-                //     }
-
-                //     if (Array.isArray(time)) time = time[0];
-                    
-                //     const dateAndTime = `${month} ${day} ${time}`;
-                    
-                //     const parsedEvent = FormatService.formatEvent(title, dateAndTime, null, { title, time, month, day, dateAndTime });
-
-
-                //     parsedEvents.push(parsedEvent);
-                // };
-
-                // return parsedEvents;
             },
         },
     }
-);    
+);
 
 exports.lambdaHandler = core.createLambdaHandler();
 exports.scrapeAndCache = core.createScrapingHandler();

@@ -5,7 +5,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient({ region: process.env.AWS_DEFAULT
 const tableName = process.env.TABLE_NAME;
 const createResponse = (statusCode, body) => ({ statusCode, body });
 const disableCache = process.env.DISABLE_WIDGET_CACHE === 'true';
-let { allEventsAreLessThanXDaysOld } = require('../helpers/timer');
+let { allEventsAreNew } = require('../helpers/timer');
 
 
 function oneDayYoung(date) {
@@ -82,7 +82,7 @@ exports.put = async (id, document) => {
     const events = document.events;
     const eventsLength = events.length;
 
-    if (!allEventsAreLessThanXDaysOld(events, 10)) {
+    if (!allEventsAreNew(events, 10)) {
         console.error('Events are too old, not caching', { id });
         return createResponse(500, 'Events are too old, not caching');
     }
