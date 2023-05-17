@@ -18,13 +18,19 @@ describe('Widget', () => {
     mockFormatEachEvent = sinon.spy();
     ScraperSSR = require('../../services/ScraperSSR');
     sinon.stub(ScraperSSR.scraper, 'run').returns(mockScrapingResults);
-    res = await new Widget(
-      'MOCK_WIDGET_KEY', 
-      'MOCK_TITLE', 
-      'MOCK_SUB_TITLE', 
-      'MOCK_SCRAPING_ARGS', 
-      mockFormatEachEvent
-    ).scrapeAndCache();
+    res = await new Widget({
+      key: 'MOCK_WIDGET_KEY',
+      title: 'MOCK_TITLE',
+      subTitle: 'MOCK_SUB_TITLE',
+      config: {
+        url: 'MOCK_URL',
+        query: {
+          val: 'MOCK_QUERY_VAL',
+          query: ['MOCK_QUERY1', 'MOCK_QUERY2']
+        },
+        postProcessing: mockFormatEachEvent,
+      }
+    }).scrapeAndCache();
   });
 
   afterEach(() => {

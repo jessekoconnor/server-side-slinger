@@ -14,10 +14,14 @@ class DateService {
         let trimmedDateStr = dateStr.trim().toUpperCase();
         let splitStringsToTry = this.splitStringBySpecialChars(trimmedDateStr);
 
+        if (this.isValidIsoDate(trimmedDateStr)) {
+            return new Date(trimmedDateStr);
+        }
+
         const strategies = [
             { name: 'ensureTimeZone', func: this.ensureTimeZone.bind(this) },
             { name: 'ensureYear', func: this.ensureYear.bind(this) },
-            { name: 'ensureAMPMformat', func: this.ensureAMPMformat.bind(this) },
+            { name: 'ensureHoursAndAMPMformat', func: this.ensureHoursAndAMPMformat.bind(this) },
             { name: 'ensureSymbolsRemoved', func: this.ensureSymbolsRemoved.bind(this) },
         ];
 
@@ -39,6 +43,12 @@ class DateService {
         }
 
         return new Error(`could not parse date from ${trimmedDateStr}`);
+    }
+
+    // regex to match only if string is an iso date
+    isValidIsoDate(dateStr) {
+        const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+        return isoDateRegex.test(dateStr);
     }
 
     // split the string into an array of strings split by pipe chars
@@ -121,27 +131,33 @@ class DateService {
 
     ensureYear(dateStr) {
         const year = new Date().getFullYear();
-        if (dateStr.indexOf(year) < 0) {
+        if (dateStr.indexOf(year) < 0 && dateStr.indexOf(year + 1) < 0) {
             return `${dateStr} ${year}`;
         }
         return dateStr;
     }
 
-    ensureAMPMformat(dateStr) {
+    ensureHoursAndAMPMformat(dateStr) {
         let newStr = dateStr;
-        let matched = false;
+        let matched = false
         const toTry = [
+            // Turn 730pm into 7:30 pm
+            {
+                name: 'HoursMins am/pm expander',
+                search: /(\d\d?)(\d\d)\s?([am|pm|AM|PM])/,
+                return: '$1:$2 $3',
+            },
             // Turn 7:30pm into 7:30 pm
             // Turn 10:30pm into 10:30 pm
             {
                 name: 'HoursMins am/pm expander',
-                search: /(\d\d?:\d\d?)([am|pm|AM|PM])/,
+                search: /(\d\d?:\d\d?)\s?([am|pm|AM|PM])/,
                 return: '$1 $2',
             },
             // Turn 9pm into 9:00 pm
             {
                 name: 'HoursOnly am/pm expander',
-                search: /(\d\d?)([am|pm|AM|PM])/,
+                search: /(\d\d?)\s?([am|pm|AM|PM])/,
                 return: '$1:00 $2',
             }
         ];

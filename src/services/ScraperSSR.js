@@ -2,12 +2,7 @@ let
     puppeteer = require('puppeteer-core'),
     chromium = require('chrome-aws-lambda'),
     browser,
-    took = (start, end, label) => {
-        let dif = start.getTime() - end.getTime(),
-            Seconds_from_T1_to_T2 = dif / 1000,
-            Seconds_Between_Dates = Math.abs(Seconds_from_T1_to_T2);
-        console.log(label + " took: ", Seconds_Between_Dates);
-    },
+    { took } = require('../helpers/timer'),
     loadTime = new Date(),
     launchBrowser = async () => {
         return puppeteer.launch({
@@ -61,69 +56,88 @@ class ScraperSSR {
     //     await browser.close();
     // }
 
+    async getInnerText(page, selector) {
+        return page.$$eval(selector, async nodes => {
+            if(nodes.length === 1) return nodes[0].innerText;
+            return nodes.map(n => n.innerText);
+        });
+    }
+
+    async getInnerAttributes(page, selector) {
+        const selectorQuery = selector.query || selector;
+        let data = await page.$$eval(selectorQuery, async (nodes,attr) => {
+            let info = nodes.map(n => n.getAttribute(attr));
+            if(info.length === 1) info = info[0];
+            return info;
+        }, selector.attribute);
+        if(selector.json) {
+            data = data.map(n => JSON.parse(n))
+        }
+        return data;
+    }
+
     // Extract data from an element
-    async evaluateElelemt(page, selector) {
+    async evaluateElelemt(page, _selector) {
+        const selector = _selector.query || _selector;
         // console.log('[Scraper SSR] evaluateElelemt', { selector, pageIsDefined: !!page });
         if (!page) {
             console.trace('page is not defined', { page, selector });
             return;
         }
-        if(typeof selector === 'string') {
-            return await page.$$eval(selector, async nodes => {
-                if(nodes.length === 1) return nodes[0].innerText;
-                return nodes.map(n => n.innerText);
-            });
-        } else {
-            let data = await page.$$eval(selector.query, async (nodes,attr) => {
-                let info = nodes.map(n => n.getAttribute(attr));
-                if(info.length === 1) info = info[0];
-                return info;
-            }, selector.attribute);
-            if(selector.json) {
-                data = data.map(n => JSON.parse(n))
-            }
-            return data;
-        }
+        if(typeof selector === 'string') return this.getInnerText(page, selector);
+        return this.getInnerAttributes(page, selector);
     }
 
     // Turn pages and selectors into data
-    async getSelection(page, selector, subSelectors) {
-        // Base case
-        if(!subSelectors) {
-            const res = await this.evaluateElelemt(page, selector);
-            // console.log('[Scraper SSR] getSelection debug1', { selector, res })
+    async getSelection(page, query) {
+        // console.log('[Scraper SSR] getSelection debug', { query, pageIsDefined: !!page })
+        const queryVal = query.val || query;
+        const queryVals = Array.isArray(queryVal) ? queryVal : [queryVal];
 
-            return res;
+        // Base case
+        if(!query.query) {
+            // console.log('[Scraper SSR] getSelection debug1', { queryVals })
+
+            const res = [];
+            for(let i = 0; i < queryVals.length;i++) {
+                const curQueryVal = queryVals[i];
+                // console.log('[Scraper SSR] getSelection debug1.1', { curQueryVal, pageIsDefined: !!page, pageText: page.innerText })
+
+                res.push(this.evaluateElelemt(page, curQueryVal));
+            }
+
+            // console.log('[Scraper SSR] getSelection debug2', { queryVals, res })
+
+            return Promise.all(res);
         }
         // Recursion case
         else {
-            let primaryElements = await page.$$(selector),
-                masterResult = [];
+            let masterResult = [];
+            
+            // Loop through all of the queries
+            for(let i = 0; i < queryVals.length;i++) {
+                const queryVal = queryVals[i].val || queryVals[i];
+                let primaryElements = await page.$$(queryVal);
 
-            // Map primary selections To an array containing all subselections
-            // for each primay selection
-            for(let i = 0; i < primaryElements.length;i++) {
-            // for(let i = 0; i < primaryElements.length;i++) {
-                    let elem = primaryElements[i],
-                    subselections = [];
+                // Process each matching element
+                for(let i = 0; i < primaryElements.length;i++) {
+                    let elem = primaryElements[i];
 
-                    // console.log('[Scraper SSR] getSelection debug recurse', { elem: elem.innerText, subSelectors, len: primaryElements.length })
+                    // console.log('[Scraper SSR] getSelection debug recurse', { elem: elem.innerText, queryVal, len: primaryElements.length, i })
 
-                // for each subselection
-                for(let j=0;j<subSelectors.length;j++) {
-                    let subSel = await this.getSelection(elem, subSelectors[j]);
-                    // save subselection
-                    subselections.push(subSel);
+                    let recursionResult = this.getSelection(elem, query.query);
+
+                    // console.log('[Scraper SSR] getSelection debug recursion popping', { elem: elem.innerText, queryVal, len: primaryElements.length, i, recursionResult })
+
+                    masterResult.push(recursionResult);
                 }
-                // save that set of subselections to primary entry
-                masterResult.push(subselections);
-            }
-            return masterResult;
+            };
+            return Promise.all(masterResult);
         }
     }
 
     // Main Method
-    async run(url, primarySelector, subSelectors) {
+    async run({ url, query }) {
         // Profile lambdaLoad
         let startTime = new Date();
         took(loadTime, startTime, '-------- Lambda loading --------');
@@ -131,7 +145,7 @@ class ScraperSSR {
         let page = await this.waitTillPageLoads(url);
 
         if (!page) {
-            console.trace('Page is not defined!!', { page, url, primarySelector, subSelectors });
+            console.trace('Page is not defined!!', { page, url, query });
             return;
         }
 
@@ -140,15 +154,15 @@ class ScraperSSR {
         took(startTime, pageLoaded, '-------- Function waitTillPageLoads --------');
 
         // Wait for first selector before proceeding
-        await page.waitFor(primarySelector.primary || primarySelector.query || primarySelector);
+        await page.waitFor(query.val || query);
 
         // Profile waitFor
         let waitFor = new Date();
         took(pageLoaded, waitFor, '-------- Function waitForSelector --------');
         
-        // console.log('[Scraper SSR] run debug1', { url, primarySelector, subSelectors });
+        // console.log('[Scraper SSR] run debug1', { url, query });
 
-        let result = await this.getSelection(page, primarySelector, subSelectors);
+        let result = await this.getSelection(page, query);
 
         // console.log('[Scraper SSR] run debug2', { result });
 

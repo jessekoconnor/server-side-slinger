@@ -100,6 +100,25 @@ Resources:
                         Path: /pressRoom
                         Method: get
 
+
+    TheMusicHall:
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: widgets/TheMusicHall.lambdaHandler
+            CodeUri: src/
+            Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
+            Events:
+                BasicCase:
+                    Type: Api 
+                    Properties:
+                        Path: /theMusicHall
+                        Method: get
+
     # Scrape 3 bridges yoga for classes
     3BridgesYoga:
         Type: AWS::Serverless::Function

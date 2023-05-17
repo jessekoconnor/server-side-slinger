@@ -3,35 +3,21 @@ const FormatService = require('../services/FormatService');
 const ScraperSSR = require('../services/ScraperSSR');
 
 module.exports = class Widget {
-    constructor(widgetKey, title, subtitle, scrapingArgs, formatEachEvent) {
-        this.widgetKey = widgetKey;
-        this.lambdaFunctionName = widgetKey;
-        this.header = FormatService.formatheader(title, subtitle, widgetKey);
-        this.scrapingArgs = scrapingArgs;
-        this.formatEachEvent = formatEachEvent;
+
+    constructor({ key, title, subtitle, config }) {
+        this.widgetKey = key;
+        this.lambdaFunctionName = key;
+        this.header = FormatService.formatheader(title, subtitle, key);
+        this.scrapingConfig = config;
     }
 
     async scrapeAndCache() {
         try {
-            // Check the cache, return if still valid
-            let cachedData = await CachingService.getWidget(this.widgetKey),
-                fetchStart = new Date();
-
-            if(cachedData && cachedData.isValid) {
-                console.log(`Returning cached widget `, this.widgetKey);
-                return cachedData.doc;
-            } else {
-                console.log(`Cache not valid, fetching data... `, this.widgetKey);
-            }
-
-            // Otherwise scrape
-            let scrapingResult = await this.scrapeAway(this.scrapingArgs, this.formatEachEvent);
+            const fetchStart = new Date();
+            let scrapingResult = await this.scrapeAway(this.scrapingConfig);
 
             // Grab the total time btw scrape and cache
             scrapingResult.timeTaken = new Date().getTime() - fetchStart.getTime();
-
-            // and then cache result
-            await CachingService.put(this.widgetKey, scrapingResult);
 
             // console.log(`Scrape And Cache SUCCESS FOR id = ${this.widgetKey}, WITH RESULT: ${JSON.stringify(scrapingResult, null, 2)}`);
             return scrapingResult;
@@ -40,21 +26,22 @@ module.exports = class Widget {
         }
     }
 
-    async scrapeAway(scrapingArgs, formatEachEvent) {
-        let events = await ScraperSSR.scraper.run(...scrapingArgs);
-        // console.log('Scraping Handler: ', JSON.stringify(events, null, 2));
+    async scrapeAway(scrapingConfig) {
+        // console.log(`Scraping Handler: ${JSON.stringify(scrapingConfig, null, 2)}`);
+        let events = await ScraperSSR.scraper.run(scrapingConfig);
+        // console.log('Scraping Handler results: ', JSON.stringify(events, null, 2));
 
         // Format each event
         let formattedEvents = [];
         for(let event of events) {
-            let formattedEvent = await formatEachEvent(event);
+            let formattedEvent = scrapingConfig.postProcessing(event);
             if(formattedEvent) {
                 formattedEvents.push(formattedEvent);
             }
         }
 
         // Return and cache result
-        return FormatService.formatResponse(this.header, formattedEvents);
+        return FormatService.formatResponse(this.header, await Promise.all(formattedEvents));
     }
 
     // async createLambdaHandler(event, context) {
@@ -63,11 +50,11 @@ module.exports = class Widget {
             let result;
             try {
                 result = await this.scrapeAndCache();
+                return context.succeed({statusCode: 200, body: JSON.stringify(result)});
             } catch (error) {
                 console.log(`lambdahandler errored: ${error}`);
                 return context.fail(error);
             }
-            return context.succeed({statusCode: 200, body: JSON.stringify(result)});
         };
     }
 

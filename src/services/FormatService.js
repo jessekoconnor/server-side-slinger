@@ -43,7 +43,8 @@ module.exports = new class FormatService {
     formatResponse(header, data) {
         return {
             header: header,
-            events: data
+            events: data,
+            eventCount: data.length,
         }
     }
 }
