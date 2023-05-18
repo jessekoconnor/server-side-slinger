@@ -19,7 +19,7 @@ class ScraperSSR {
         let startTime = new Date();
         // browser = await puppeteer.launch({headless: true});
         if(!browser) {
-            console.log('Generating browser...');
+            // console.log('Generating browser...');
             browser = await launchBrowser();
             browser.on('disconnected', async () => {
                 console.log('browser is disconnected.');

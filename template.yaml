@@ -12,6 +12,7 @@ Globals:
         Timeout: 3
         Environment:
             Variables:
+                TABLE_NAME: !Ref WidgetCache
                 DISABLE_WIDGET_CACHE: false
                 LOCAL_LAMBDA: false
         CodeUri: src/
@@ -32,6 +33,8 @@ Resources:
             Handler: components/Dashboard.lambdaHandler
             CodeUri: src/
             Policies:
+            - DynamoDBCrudPolicy:
+                TableName: !Ref WidgetCache
             - LambdaInvokePolicy:
                 FunctionName: "*"
             Environment: # Reference the widget lambdas
@@ -57,10 +60,13 @@ Resources:
             Handler: components/Dashboard.lambdaHandler
             CodeUri: src/
             Policies:
+            - DynamoDBCrudPolicy:
+                TableName: !Ref WidgetCache
             - LambdaInvokePolicy:
                 FunctionName: "*"
             Environment: # Reference the widget lambdas
                 Variables:
+                    TABLE_NAME: !Ref WidgetCache
                     DashboardName: "Nightlife"
                     Function1: !Ref 3SArtspace
                     Function2: !Ref BookAndBar
@@ -84,6 +90,11 @@ Resources:
             Handler: widgets/PressRoom.lambdaHandler
             CodeUri: src/
             Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
                     Type: Api 
@@ -97,6 +108,11 @@ Resources:
             Handler: widgets/TheMusicHall.lambdaHandler
             CodeUri: src/
             Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
                     Type: Api 
@@ -111,6 +127,11 @@ Resources:
             Handler: widgets/3BridgesYoga.lambdaHandler
             CodeUri: src/
             Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
                     Type: Api 
@@ -125,6 +146,11 @@ Resources:
             Handler: widgets/BlazeYoga.lambdaHandler
             CodeUri: src/
             Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
                     Type: Api 
@@ -139,6 +165,11 @@ Resources:
             Handler: widgets/3SArtspace.lambdaHandler
             CodeUri: src/
             Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
                     Type: Api 
@@ -152,6 +183,11 @@ Resources:
             Handler: widgets/BookAndBar.lambdaHandler
             CodeUri: src/
             Policies:
+            - DynamoDBCrudPolicy:
+                  TableName: !Ref WidgetCache
+            Environment: 
+                Variables:
+                    TABLE_NAME: !Ref WidgetCache
             Events:
                 BasicCase:
                     Type: Api 
@@ -162,3 +198,7 @@ Resources:
     # -------------------
     # Caches
     # ----------
+    WidgetCache:
+        Type: AWS::Serverless::SimpleTable
+        Properties:
+            TableName: widget-cache

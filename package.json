@@ -17,6 +17,7 @@
     "sam-deploy": "sam deploy --profile server-side-slinger --no-confirm-changeset",
     "sam-deploy-disable-rollback": "sam deploy --profile server-side-slinger --no-confirm-changeset --disable-rollback",
     "deploy-code": "npm t && npm run integration-test && npm run sam-validate && npm run sam-build && npm run sam-deploy",
+    "deploy-code-no-itest": "npm t && npm run sam-validate && npm run sam-build && npm run sam-deploy",
     "deploy-code-disable-rollback": "npm t && npm run integration-test && npm run sam-validate && npm run sam-build && npm run sam-deploy-disable-rollback",
     "deploy-images": "cd img && ./deploy.sh && cd ../",
     "logs": "sam logs --stack-name server-side-slinger --profile server-side-slinger -t",

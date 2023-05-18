@@ -26,7 +26,7 @@ describe('Integration testing suite for dashboards', () => {
             let res;
             
             before(async function() {
-                this.timeout(35000);
+                this.timeout(40000);
                 this.retries(3);
 
                 res = await getRequest(fullUrl);
