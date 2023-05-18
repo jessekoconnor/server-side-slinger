@@ -106,8 +106,8 @@ class ScraperSSR {
 
                 // console.log('[Scraper SSR] getSelection basecase1.1', { curQuery, pageIsDefined: !!page, pageText: page.innerText })
 
-                const promise = await this.evaluateElelemt(page, curQuery);
-                // const promise = this.evaluateElelemt(page, curQuery);
+                // const promise = await this.evaluateElelemt(page, curQuery);
+                const promise = this.evaluateElelemt(page, curQuery);
                 baseCaseResults.push(promise);
 
                 // console.log('[Scraper SSR] getSelection basecase2', { queries, res })
@@ -123,8 +123,8 @@ class ScraperSSR {
 
                     // console.log('[Scraper SSR] getSelection debug recurse', { elem: elem.innerText, queryVal, len: primaryElements.length, i })
 
-                    // let recursionResult = this.getSelection(elem, curQuery.query, depth + 1);
-                    let recursionResult = await this.getSelection(elem, curQuery.query, depth + 1);
+                    let recursionResult = this.getSelection(elem, curQuery.query, depth + 1);
+                    // let recursionResult = await this.getSelection(elem, curQuery.query, depth + 1);
 
                     // console.log('[Scraper SSR] getSelection debug recurse2', { elem: elem.innerText, recursionResult, len: primaryElements.length, i })
 
@@ -135,12 +135,15 @@ class ScraperSSR {
             };
         }
 
-        const [baseCasesResolved, recurionCasesResolved] = [baseCaseResults, recursionResults];
-        // const [baseCasesResolved, recurionCasesResolved] = [await Promise.all(baseCaseResults), await Promise.all(recursionResults)];
+        const [baseCasesResolved, recurionCasesResolved] = await Promise.all([
+            Promise.all(baseCaseResults),
+            Promise.all(recursionResults),
+        ]);
+        // const [baseCasesResolved, recurionCasesResolved] = [baseCaseResults, recursionResults];
 
         const combinedResults = this.arr1ByArr2(baseCasesResolved, recurionCasesResolved);
         const flattened = this.flattenToTwoDinesionalArray(combinedResults);
-        console.log('[Scraper SSR] getSelection debug recursion popping', JSON.stringify({ baseCasesResolved, recurionCasesResolved, combinedResults, flattened, depth }, null, 2));
+        // console.log('[Scraper SSR] getSelection debug recursion popping', JSON.stringify({ baseCasesResolved, recurionCasesResolved, combinedResults, flattened, depth }, null, 2));
 
         return combinedResults;
         // return [...baseCaseResults, ...recursionResults];
@@ -152,7 +155,7 @@ class ScraperSSR {
     arr1ByArr2(arr1, _arr2) {
         let result = [];
 
-        console.log('flattenArrays debug1', JSON.stringify({ arr1, _arr2, arr1IsEmpty: this.isEmptyArrayOrArrayOfEmptyArrays(arr1), arr2IsEmpty: this.isEmptyArrayOrArrayOfEmptyArrays(_arr2) }, null, 2));
+        // console.log('flattenArrays debug1', JSON.stringify({ arr1, _arr2, arr1IsEmpty: this.isEmptyArrayOrArrayOfEmptyArrays(arr1), arr2IsEmpty: this.isEmptyArrayOrArrayOfEmptyArrays(_arr2) }, null, 2));
 
         if (this.isEmptyArrayOrArrayOfEmptyArrays(arr1)) return _arr2;
         if (this.isEmptyArrayOrArrayOfEmptyArrays(_arr2)) return arr1;
@@ -160,7 +163,7 @@ class ScraperSSR {
         const arr2 = this.isArrayOfArrays(_arr2) ? _arr2 : [_arr2];
         for(let j = 0; j < arr2.length; j++) {
             let arr2Array = arr2[j];
-            console.log('flattenArrays debug2', JSON.stringify({ arr1,arr2, _arr2, isArrofArrs: this.isArrayOfArrays(_arr2), arr2Array, res: [...arr1, ...arr2Array] }, null, 2))
+            // console.log('flattenArrays debug2', JSON.stringify({ arr1,arr2, _arr2, isArrofArrs: this.isArrayOfArrays(_arr2), arr2Array, res: [...arr1, ...arr2Array] }, null, 2))
             result.push([...arr1, ...arr2Array]);
         }
 

@@ -32,7 +32,7 @@ let core = new Widget(
                 ],
             },
             postProcessing: event => {
-                console.log('Music Hall events!!!!', JSON.stringify({ event }, null, 2));
+                // console.log('Music Hall events!!!!', JSON.stringify({ event }, null, 2));
 
                 const [ month, day, title, _time ] = event;
                 if (!month || !day || !title || !_time) return;
