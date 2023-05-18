@@ -4,7 +4,7 @@
   "description": "This is a sample template for sam-app - Below is a brief explanation of what we have generated for you:",
   "main": "index.js",
   "scripts": {
-    "start": "rm -rf ./.aws-sam/build && (sam local start-lambda &) && TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-api --region us-east-1 2>&1 | tr \"\r\" \"\n\"",
+    "start": "rm -rf ./.aws-sam/build && (DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-lambda &) && TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-api --region us-east-1 2>&1 | tr \"\r\" \"\n\"",
     "start-local-debug": "rm -rf ./.aws-sam/build && (sam local start-lambda &) && TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=true LOCAL_LAMBDA=true sam local start-api --debug 2>&1 | tr \"\r\" \"\n\"",
     "start-local-fast": "rm -rf ./.aws-sam/build && (sam local start-lambda &) && TABLE_NAME=JesseTest DISABLE_WIDGET_CACHE=false LOCAL_LAMBDA=true sam local start-api",
     "kill-local": "kill $(ps aux | grep 'sam local' | awk '!/grep/' | awk '{print $2}')",

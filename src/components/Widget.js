@@ -11,7 +11,7 @@ module.exports = class Widget {
         this.scrapingConfig = config;
     }
 
-    async scrapeAndCache({ cacheKey } = {}, { functionName }) {
+    async scrapeAndCache({ cacheKey } = {}, { functionName } = {}) {
         try {
             // console.log(`Scrape And Cache STARTING FOR id = ${this.widgetKey}`, { functionName, cacheKey })
             const fetchStart = new Date();
