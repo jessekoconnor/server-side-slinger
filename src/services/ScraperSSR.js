@@ -15,30 +15,34 @@ let
 
 class ScraperSSR {
 
+    async generateBrowser() {
+        let startTime = new Date();
+        // browser = await puppeteer.launch({headless: true});
+        if(!browser) {
+            console.log('Generating browser...');
+            browser = await launchBrowser();
+            browser.on('disconnected', async () => {
+                console.log('browser is disconnected.');
+                await launchBrowser();
+            });
+        }
+
+        // Profiling Launch
+        let launchedTime = new Date();
+        took(startTime, launchedTime, 'Puppeteer launch');
+    }
+        
+
     // Hold up until the page loads
     async waitTillPageLoads(url) {
         try {
             let startTime = new Date();
-            // browser = await puppeteer.launch({headless: true});
-            if(!browser) {
-                console.log('Generating browser...');
-                browser = await launchBrowser();
-                browser.on('disconnected', async () => {
-                    console.log('browser is disconnected.');
-                    await launchBrowser();
-                });
-            }
-
-            // Profiling Launch
-            let launchedTime = new Date();
-            took(startTime, launchedTime, 'Puppeteer launch');
-
-
+            
             const page = await browser.newPage();
 
             // Profiling new page
             let newPageLoaded = new Date();
-            took(launchedTime, newPageLoaded, 'New Page');
+            took(startTime, newPageLoaded, 'New Page took');
 
             await page.goto(url, {waitUntil: 'domcontentloaded'});
 
@@ -247,11 +251,10 @@ class ScraperSSR {
         return Array.isArray(arr) && (arr.length === 0 || (Array.isArray(arr[0]) && arr[0].length === 0));;
     };
 
-    // Main Method
-    async run({ url, query }) {
+    async generateEventsFromUrl(url, query, pageNumber = 1) {
         // Profile lambdaLoad
         let startTime = new Date();
-        took(loadTime, startTime, '-------- Lambda loading --------');
+        took(loadTime, startTime, 'page: ' + pageNumber + '-------- Lambda loading --------');
 
         let page = await this.waitTillPageLoads(url);
 
@@ -262,14 +265,14 @@ class ScraperSSR {
 
         // Profile pageLoad
         let pageLoaded = new Date();
-        took(startTime, pageLoaded, '-------- Function waitTillPageLoads --------');
+        took(startTime, pageLoaded, 'page: ' + pageNumber + '-------- Function waitTillPageLoads --------');
 
         // Wait for first selector before proceeding
         await page.waitFor(query.val || query);
 
         // Profile waitFor
         let waitFor = new Date();
-        took(pageLoaded, waitFor, '-------- Function waitForSelector --------');
+        took(pageLoaded, waitFor, 'page: ' + pageNumber + '-------- Function waitForSelector --------');
         
         // console.log('[Scraper SSR] run debug1', { url, query });
 
@@ -279,11 +282,58 @@ class ScraperSSR {
 
         // Profile getSelection
         let getSelection = new Date();
-        took(waitFor, getSelection, '-------- Function getSelection --------');
+        took(waitFor, getSelection, 'page: ' + pageNumber + '-------- Function getSelection --------');
 
         // Close browser and return
         // this.closeBrowser();
         return result;
+    }
+
+    generatePageUrls(url, query, pages = 1, nextPageFunct) {
+        const month = new Date().getMonth() + 1;
+        const year = new Date().getFullYear();
+
+        let context = { month, year };
+
+        let urls = [];
+        for (let i = 1; i <= pages; i++) {
+            const urlWithPageNumber = url.replace('{{pageNumber}}', i);
+            const urlWithPageNumberAndMonth = urlWithPageNumber.replace('{{month}}', context.month);
+            const urlWithPageNumberAndMonthAndYear = urlWithPageNumberAndMonth.replace('{{year}}', context.year);
+            urls.push(urlWithPageNumberAndMonthAndYear);
+            if (nextPageFunct) {
+                const nextPageObj = nextPageFunct(context);
+                context = { ...context, ...nextPageObj };
+            }
+        }
+        return urls;
+    }
+
+    // Main Method
+    async run({ url, query, pages = 1, nextPage }) {
+        try {
+            await this.generateBrowser();
+            const urls = this.generatePageUrls(url, query, pages, nextPage);
+            const promises = [];
+            for(let i = 0; i < urls.length; i++) {
+                let url = urls[i];
+                let promise = this.generateEventsFromUrl(url, query, i + 1);
+                promises.push(promise);
+                console.log('[Scraper SSR] run debug1', { url, query, pages, urls });
+            }
+
+            const resolved = await Promise.all(promises);
+
+            let combinedEvents = [];
+            for(let i = 0; i < resolved.length; i++) {
+                let result = resolved[i];
+                combinedEvents = [...combinedEvents, ...result];
+                console.log('[Scraper SSR] run debug2', { result });
+            }
+            return combinedEvents;
+        } catch (error) {
+            console.trace('Error in SSR run', { error, url, query, pages, nextPage });
+        }
     }
 }
 

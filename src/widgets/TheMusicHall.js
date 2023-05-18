@@ -12,7 +12,9 @@ let core = new Widget(
         title,
         subtitle,
         config: {
-            url: 'https://www.themusichall.org/calendar/?exclude=&month=2023-06',
+            url: 'https://www.themusichall.org/calendar/?exclude=&month={{year}}-{{month}}',
+            pages: 2,
+            nextPage: ({ month }) => ({ month: month + 1 }),
             query: {
                 val: 'div.day--has-events',
                 query: [

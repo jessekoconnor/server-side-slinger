@@ -77,7 +77,7 @@ exports.put = async (id, document) => {
         Item: item
     };
 
-    console.log(`PUT ITEM FOR doc = ${id}`, JSON.stringify({ document }, null, 2));
+    // console.log(`PUT ITEM FOR doc = ${id}`, JSON.stringify({ document }, null, 2));
 
     const events = document.events;
     const eventsLength = events.length;
