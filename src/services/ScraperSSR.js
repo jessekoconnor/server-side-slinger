@@ -89,7 +89,7 @@ class ScraperSSR {
     }
 
     // Turn pages and selectors into data
-    async getSelection(page, query) {
+    async getSelection(page, query, depth = 1) {
         const queries = Array.isArray(query) ? query : [query];
         
         // console.log('[Scraper SSR] getSelection top level', { query, pageIsDefined: !!page })
@@ -106,8 +106,9 @@ class ScraperSSR {
 
                 // console.log('[Scraper SSR] getSelection basecase1.1', { curQuery, pageIsDefined: !!page, pageText: page.innerText })
 
-                const res = await this.evaluateElelemt(page, curQuery);
-                baseCaseResults.push(res);
+                const promise = await this.evaluateElelemt(page, curQuery);
+                // const promise = this.evaluateElelemt(page, curQuery);
+                baseCaseResults.push(promise);
 
                 // console.log('[Scraper SSR] getSelection basecase2', { queries, res })
             }
@@ -122,7 +123,8 @@ class ScraperSSR {
 
                     // console.log('[Scraper SSR] getSelection debug recurse', { elem: elem.innerText, queryVal, len: primaryElements.length, i })
 
-                    let recursionResult = await this.getSelection(elem, curQuery.query);
+                    // let recursionResult = this.getSelection(elem, curQuery.query, depth + 1);
+                    let recursionResult = await this.getSelection(elem, curQuery.query, depth + 1);
 
                     // console.log('[Scraper SSR] getSelection debug recurse2', { elem: elem.innerText, recursionResult, len: primaryElements.length, i })
 
@@ -133,10 +135,114 @@ class ScraperSSR {
             };
         }
 
-        // console.log('[Scraper SSR] getSelection debug recursionResults', { recursionResults, baseCaseResults })
+        const [baseCasesResolved, recurionCasesResolved] = [baseCaseResults, recursionResults];
+        // const [baseCasesResolved, recurionCasesResolved] = [await Promise.all(baseCaseResults), await Promise.all(recursionResults)];
 
-        return [...baseCaseResults, ...recursionResults];
+        const combinedResults = this.arr1ByArr2(baseCasesResolved, recurionCasesResolved);
+        const flattened = this.flattenToTwoDinesionalArray(combinedResults);
+        console.log('[Scraper SSR] getSelection debug recursion popping', JSON.stringify({ baseCasesResolved, recurionCasesResolved, combinedResults, flattened, depth }, null, 2));
+
+        return combinedResults;
+        // return [...baseCaseResults, ...recursionResults];
     }
+
+    // Flatten two arrays together
+    // arr1 = [1,2,3] arr2 = [4,5]
+    // result = [[1,2,3,4], [1,2,3,5]]
+    arr1ByArr2(arr1, _arr2) {
+        let result = [];
+
+        console.log('flattenArrays debug1', JSON.stringify({ arr1, _arr2, arr1IsEmpty: this.isEmptyArrayOrArrayOfEmptyArrays(arr1), arr2IsEmpty: this.isEmptyArrayOrArrayOfEmptyArrays(_arr2) }, null, 2));
+
+        if (this.isEmptyArrayOrArrayOfEmptyArrays(arr1)) return _arr2;
+        if (this.isEmptyArrayOrArrayOfEmptyArrays(_arr2)) return arr1;
+
+        const arr2 = this.isArrayOfArrays(_arr2) ? _arr2 : [_arr2];
+        for(let j = 0; j < arr2.length; j++) {
+            let arr2Array = arr2[j];
+            console.log('flattenArrays debug2', JSON.stringify({ arr1,arr2, _arr2, isArrofArrs: this.isArrayOfArrays(_arr2), arr2Array, res: [...arr1, ...arr2Array] }, null, 2))
+            result.push([...arr1, ...arr2Array]);
+        }
+
+        if (this.isArrayOfArraysButOnlyOneElementNested(result)) return result[0];
+
+        return result;
+    }
+
+    // flattens X dimensional array to 2 dimensional array if X is greater than 2
+    flattenToTwoDinesionalArray(arr, maxArrayDimensions = 2, depth = 1) {
+        // console.log('flattenToTwoDinesionalArray debug0', JSON.stringify({ arr, maxArrayDimensions, depth }, null, 2));
+
+        if (!Array.isArray(arr)) return arr;
+
+        let toRet = [];
+        for(let i = 0; i < arr.length; i++) {
+            const elem = arr[i];
+
+            if (!Array.isArray(elem)) toRet.push(elem);
+            else {
+                const arrDepth = this.getDepthOfArray(elem);
+                const depthGreaterThanDesired = arrDepth > maxArrayDimensions - 1;
+                let flattened = false;
+                // console.log('flattenToTwoDinesionalArray debug1', JSON.stringify({ elem, toRet, depth, maxArrayDimensions, depthGreaterThanDesired, arrDepth, maxArrayDimensions }, null, 2))
+                if (depthGreaterThanDesired) {
+                    flattened = this.flattenToTwoDinesionalArray(elem, maxArrayDimensions, depth + 1);
+                    toRet = toRet.concat(flattened);
+                }
+                else {
+                    toRet.push(elem);
+                }
+                // console.log('flattenToTwoDinesionalArray debug2', JSON.stringify({ arr, elem, toRet, depth, i, flattened, maxArrayDimensions, depthGtDesired: depth > 2, arrDepth, maxArrayDimensions }, null, 2))
+            }
+        }
+        return toRet;
+
+
+
+
+        const arrayDepth = this.getDepthOfArray(arr);
+        console.log('flattenToTwoDinesionalArray debug1', { arr, depth, depthGt2: depth > 2, arrayDepth })
+
+        if (arrayDepth < desiredDepth + 1) return arr;
+        const flattenedOneLevel = this.flattenArray(arr);
+        const res = this.flattenToTwoDinesionalArray(flattenedOneLevel, desiredDepth, depth + 1);
+        console.log('flattenToTwoDinesionalArray debug2', { arr, depth, depthGt2: depth > 2, arrayDepth, res })
+        return res;
+    }
+
+    getDepthOfArray(arr, depth = 0) {
+        if (!Array.isArray(arr)) return depth;
+        return this.getDepthOfArray(arr[0], depth + 1);
+    }
+
+    // flattens 2 dimensional array to 1 dimensional array
+
+    flattenArray(arr) {
+        console.log('flattenArray debug1', JSON.stringify({ arr }, null, 2))
+        if (!Array.isArray(arr)) return arr;
+        console.log('flattenArray debug2', { arr, reduced: arr.reduce((acc, val) => acc.concat(val), []) })
+        return arr.reduce((acc, val) => {
+            const depthOfVal = this.getDepthOfArray(val);
+            if (depthOfVal < 2) {
+                console.log('flattenArray debug3', { arr, val, depthOfVal, acc, res: [...acc, val] })
+                return acc.push(val);
+            }
+            console.log('flattenArray debug4', { arr, val, depthOfVal, acc, res: acc.concat(val) })
+            return acc.concat(val);
+        }, []);
+    }
+
+    isArrayOfArraysButOnlyOneElementNested(arr) {
+        return Array.isArray(arr) && Array.isArray(arr[0]) && arr.length === 1;
+    }
+
+    isArrayOfArrays(arr) {
+        return Array.isArray(arr) && Array.isArray(arr[0]);
+    }
+
+    isEmptyArrayOrArrayOfEmptyArrays(arr) {
+        return Array.isArray(arr) && (arr.length === 0 || (Array.isArray(arr[0]) && arr[0].length === 0));;
+    };
 
     // Main Method
     async run({ url, query }) {
@@ -178,9 +284,11 @@ class ScraperSSR {
     }
 }
 
+const ScraperSSRInstance = new ScraperSSR();
+
 let scraper;
 module.exports = {
-    scraper: new ScraperSSR(),
+    scraper: ScraperSSRInstance,
     lambdaHandler: async (event, context, _this) => {
         let result = null;
         let browser = null;

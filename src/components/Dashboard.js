@@ -4,6 +4,7 @@ const localLambda = process.env.LOCAL_LAMBDA === 'true';
 const CachingService = require('../services/CachingService');
 const { took } = require('../helpers/timer');
 
+let lambdaInvokeConfig = { region: process.env.AWS_DEFAULT_REGION };
 
 class Dashboard {
     constructor(dashTitle) {
@@ -114,10 +115,10 @@ class Dashboard {
         let lambda;
         if(localLambda) {
             console.log('Local Lambda endabled, using local endpoint');
-            lambda = new aws.Lambda({endpoint:'http://host.docker.internal:3001/'});
+            lambda = new aws.Lambda({ endpoint:'http://host.docker.internal:3001/', ...lambdaInvokeConfig });
         } else {
             // console.log('Local Lambda disabled, not using local endpoint');
-            lambda = new aws.Lambda();
+            lambda = new aws.Lambda(lambdaInvokeConfig);
         }
 
         let params = {
@@ -125,6 +126,7 @@ class Dashboard {
             // LogType: 'Tail',
             Payload: JSON.stringify({ cacheKey: functName }),
         };
+        // console.log('Function Name calling lambda with', { functName, config: { endpoint:'http://host.docker.internal:3001/', ...lambdaInvokeConfig } } )
         return this.invokeLambdaAndCache({ lambda, params, cachedData, start });
     }
 }

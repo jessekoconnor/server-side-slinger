@@ -55,6 +55,8 @@ Resources:
         DependsOn:
             - PressRoom
             - 3SArtspace
+            - BookAndBar
+            - TheMusicHall
         Properties:
             Handler: components/Dashboard.lambdaHandler
             CodeUri: src/
@@ -70,6 +72,7 @@ Resources:
                     Function1: !Ref 3SArtspace
                     Function2: !Ref BookAndBar
                     Function3: !Ref PressRoom
+                    Function4: !Ref TheMusicHall
             Events:
                 BasicCase:
                     Type: Api 
@@ -99,7 +102,6 @@ Resources:
                     Properties:
                         Path: /pressRoom
                         Method: get
-
 
     TheMusicHall:
         Type: AWS::Serverless::Function

@@ -46,6 +46,21 @@ module.exports = class Widget {
             }
         }
 
+        // // Format each event
+        // let formattedEvents = [];
+        // const seen = new Set();
+        // for(let event of events) {
+        //     let formattedEvent = scrapingConfig.postProcessing(event);
+        //     if (formattedEvent) {
+        //         const { startDate, title } = formattedEvent;
+        //         const hash = `${startDate}-${title}`;
+        //         if (!seen.has(hash)) {
+        //             formattedEvents.push(formattedEvent);
+        //             seen.add(hash);
+        //         }
+        //     };
+        // }
+
         // Return and cache result
         return FormatService.formatResponse(this.header, await Promise.all(formattedEvents));
     }
