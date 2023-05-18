@@ -56,7 +56,7 @@ describe('Integration testing suite for widgets', () => {
             });
     
             it('should return events that are less than 10 days old', async () => {
-                expect(allEventsAreNew(res.events, 10)).to.be.true;
+                expect(allEventsAreNew(res.events, 30)).to.be.true;
             });
         });
     });

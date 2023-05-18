@@ -5,6 +5,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient({ region: process.env.AWS_DEFAULT
 const tableName = process.env.TABLE_NAME;
 const createResponse = (statusCode, body) => ({ statusCode, body });
 const disableCache = process.env.DISABLE_WIDGET_CACHE === 'true';
+const localLambda = process.env.LOCAL_LAMBDA === 'true';
 let { allEventsAreNew } = require('../helpers/timer');
 
 
@@ -19,12 +20,6 @@ function oneDayYoung(date) {
 
 exports.getWidget = async(id) => {
     try {
-        // Disable cache if parameter override
-        if (disableCache) {
-            console.log('CACHING IS DISABLED, RETURNING', { disableCache, processEnvVar: process.env.DISABLE_WIDGET_CACHE });
-            return;
-        }
-
         let res = await exports.get(id);
 
         // Check created date for validity
@@ -42,6 +37,12 @@ exports.getWidget = async(id) => {
 };
 
 exports.get = async (id) => {
+    // Disable cache if parameter override
+    if (disableCache || localLambda) {
+        console.log('CACHING IS DISABLED, RETURNING', { disableCache, localLambda, processEnvVar: process.env.DISABLE_WIDGET_CACHE });
+        return;
+    }
+
     let params = {
         TableName: tableName,
         Key: {
@@ -68,6 +69,12 @@ function put(params) {
 }
 
 exports.put = async (id, document) => {
+    // Disable cache if parameter override
+    if (disableCache || localLambda) {
+        console.log('CACHING IS DISABLED, RETURNING FROM PUT', { disableCache, localLambda, processEnvVar: process.env.DISABLE_WIDGET_CACHE });
+        return;
+    }
+
     let item = {
         id: id,
         doc: JSON.stringify(document),
@@ -82,7 +89,7 @@ exports.put = async (id, document) => {
     const events = document.events;
     const eventsLength = events.length;
 
-    if (!allEventsAreNew(events, 10)) {
+    if (!allEventsAreNew(events, 35)) {
         console.error('Events are too old, not caching', { id });
         throw createResponse(500, 'Events are too old, not caching');
     }

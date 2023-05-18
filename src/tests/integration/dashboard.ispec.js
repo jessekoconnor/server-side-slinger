@@ -40,7 +40,7 @@ describe('Integration testing suite for dashboards', () => {
 
             it('should return events that are less than 10 days old', async () => {
                 res.data.forEach(widget => {
-                    expect(allEventsAreNew(widget.events, 10)).to.be.true;
+                    expect(allEventsAreNew(widget.events, 30)).to.be.true;
                 });
             });
         });

@@ -16,12 +16,11 @@
     "sam-build": "sam build --profile server-side-slinger -t template.yaml -s .",
     "sam-deploy": "sam deploy --profile server-side-slinger --no-confirm-changeset",
     "sam-deploy-disable-rollback": "sam deploy --profile server-side-slinger --no-confirm-changeset --disable-rollback",
-    "deploy-code": "npm t && npm run integration-test && npm run sam-validate && npm run sam-build && npm run sam-deploy && npm run drop-widget-cache-table",
+    "deploy-code": "npm t && npm run integration-test && npm run sam-validate && npm run sam-build && npm run sam-deploy",
     "deploy-code-disable-rollback": "npm t && npm run integration-test && npm run sam-validate && npm run sam-build && npm run sam-deploy-disable-rollback",
     "deploy-images": "cd img && ./deploy.sh && cd ../",
     "logs": "sam logs --stack-name server-side-slinger --profile server-side-slinger -t",
-    "list-endpoints": "sam list endpoints --output json --stack-name server-side-slinger --profile server-side-slinger",
-    "drop-widget-cache-table": "aws dynamodb delete-table --table-name widget-cache --profile server-side-slinger"
+    "list-endpoints": "sam list endpoints --output json --stack-name server-side-slinger --profile server-side-slinger"
   },
   "author": "",
   "license": "ISC",

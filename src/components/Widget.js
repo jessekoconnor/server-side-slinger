@@ -23,7 +23,7 @@ module.exports = class Widget {
             try {
                 await CachingService.put(cacheKey || functionName, scrapingResult);
             } catch(error) {
-                console.error(`CachingService.cacheResult errored`, JSON.stringify({ error, cacheKey }));
+                console.error(`CachingService.cacheResult errored`, JSON.stringify({ error, cacheKey, functionName }));
             }
 
             // console.log(`Scrape And Cache SUCCESS FOR id = ${this.widgetKey}, WITH RESULT: ${JSON.stringify(scrapingResult, null, 2)}`);

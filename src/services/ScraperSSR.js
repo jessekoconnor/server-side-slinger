@@ -319,7 +319,7 @@ class ScraperSSR {
                 let url = urls[i];
                 let promise = this.generateEventsFromUrl(url, query, i + 1);
                 promises.push(promise);
-                console.log('[Scraper SSR] run debug1', { url, query, pages, urls });
+                // console.log('[Scraper SSR] run debug1', { url, query, pages, urls });
             }
 
             const resolved = await Promise.all(promises);
@@ -328,7 +328,7 @@ class ScraperSSR {
             for(let i = 0; i < resolved.length; i++) {
                 let result = resolved[i];
                 combinedEvents = [...combinedEvents, ...result];
-                console.log('[Scraper SSR] run debug2', { result });
+                // console.log('[Scraper SSR] run debug2', { result });
             }
             return combinedEvents;
         } catch (error) {
