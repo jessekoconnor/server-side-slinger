@@ -11,8 +11,9 @@ module.exports = class Widget {
         this.scrapingConfig = config;
     }
 
-    async scrapeAndCache({ cacheKey } = {}) {
+    async scrapeAndCache({ cacheKey } = {}, { functionName }) {
         try {
+            // console.log(`Scrape And Cache STARTING FOR id = ${this.widgetKey}`, { functionName, cacheKey })
             const fetchStart = new Date();
             let scrapingResult = await this.scrapeAway(this.scrapingConfig);
 
@@ -20,7 +21,7 @@ module.exports = class Widget {
             scrapingResult.timeTaken = new Date().getTime() - fetchStart.getTime();
             
             try {
-                await CachingService.put(cacheKey, scrapingResult);
+                await CachingService.put(cacheKey || functionName, scrapingResult);
             } catch(error) {
                 console.error(`CachingService.cacheResult errored`, JSON.stringify({ error, cacheKey }));
             }
@@ -61,7 +62,7 @@ module.exports = class Widget {
         return async (event, context) => {
             let result;
             try {
-                result = await this.scrapeAndCache(event);
+                result = await this.scrapeAndCache(event, context);
                 return context.succeed({statusCode: 200, body: JSON.stringify(result)});
             } catch (error) {
                 console.log(`lambdahandler errored: ${error}`);
