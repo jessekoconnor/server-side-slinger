@@ -1,5 +1,5 @@
 ![SSS Logo](img/dont-panic.avif)
-Rand Al'Thor (Wheel of Time)
+Hitchikers guide to the galaxy (Douglas Arthur)
 
 # Server Side Slinger
 
@@ -15,8 +15,8 @@ One of the remarkable features of Server Side Slinger lies in its unparalleled o
 
 Server Side Slinger is not merely a tool; it is an impressive testament to innovation and efficiency in the realm of web scraping. Embrace its power and elevate your web scraping endeavors to new heights.
 
-[Backend](https://github.com/jessekoconnor/server-side-slinger): AWS lambda functions, API gateway, Dynamo database
-[Frontend](https://github.com/jessekoconnor/WebSurfer): App store, Reach native, Expo
+* [Backend](https://github.com/jessekoconnor/server-side-slinger): AWS lambda functions, API gateway, Dynamo database
+* [Frontend](https://github.com/jessekoconnor/WebSurfer): App store, Reach native, Expo
     * [App store link](https://testflight.apple.com/join/br5KTP6i)
 
 ## Most interesting problems solved
