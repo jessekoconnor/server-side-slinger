@@ -11,39 +11,106 @@ Server Side Slinger is a cutting-edge service that revolutionizes web scraping a
 
 Driven by a personal need to stay informed about local music events while minimizing manual effort, I meticulously designed this service to cater to individuals like myself who crave convenience. Now, you can effortlessly stay up to date with your favorite local sites, ensuring that no local show slips through the cracks!
 
-One of the remarkable features of Server Side Slinger lies in its unparalleled optimization for asynchronous execution. Through meticulous fine-tuning, I achieved an impressive 10x boost in performance since starting the, ensuring lightning-fast results and exceptional user experience.
-
-Server Side Slinger is not merely a tool; it is an impressive testament to innovation and efficiency in the realm of web scraping. Embrace its power and elevate your web scraping endeavors to new heights.
+One of the remarkable features of Server Side Slinger lies in its optimization for asynchronous execution. Through meticulous fine-tuning, I achieved an impressive 10x boost in performance since starting the project, ensuring lightning-fast results and exceptional user experience.
 
 * [Backend](https://github.com/jessekoconnor/server-side-slinger): AWS lambda functions, API gateway, Dynamo database
-* [Frontend](https://github.com/jessekoconnor/WebSurfer): App store, Reach native, Expo
-    * [App store link](https://testflight.apple.com/join/br5KTP6i)
+* [Frontend (Dashmobile)](https://github.com/jessekoconnor/WebSurfer): App store, Reach native, Expo
+    * [App store link | within TestFlight (Dashmobile)](https://testflight.apple.com/join/br5KTP6i)
 
 ## Most interesting problems solved
 
-### Fitting a Browser Binary into a Lambda Function: A Cosmic Conundrum
+There were many interesting problems in this project but the highlights include:
 
-Imagine the perplexing challenge of running webpages within the confined universe of a lambda function. Mere URL requests fell short as these pages possessed intricate JavaScript intricacies, summoning additional requests and revealing captivating content like local business showtimes and live event updates. Alas, the function size limit threatened to overshadow our cosmic aspirations.
-
-Yet fear not! With a stroke of cosmic ingenuity, I discovered a stripped-down version of Chromium that snugly fit within the Lambdas. Leveraging Puppeteer, my trusty guide, I summoned headless browsers from the depths of AWS Lambda, enabling an extraordinary convergence of web page wonder within our cosmic boundaries.
-
-### Parsing Dates from Strings: A Journey through the Galactic Time Vortex
-
-Ah, the enigmatic realm of date formatting, where an infinite variety of website configurations awaited deciphering. Overcoming this challenge required a combination of resilience and systematic exploration, much like an intrepid hitchhiker seeking to unravel the mysteries of the universe.
-
-To navigate this celestial labyrinth, I adopted an approach of failing early and logging each mischievous date that defied comprehension. Armed with comprehensive unit tests, I transformed these observed failures into guiding stars, illuminating new paths to success.
-
-Embracing the diversity of strategies, I ventured forth, applying distinct methods to individual strings and stacking them together like cosmic building blocks. At the heart of this celestial dance, native dates guided me toward the goldilocks zone, leading me to a workable format: "{day} {month} {year} {timezone}". With this harmonious blend of cosmic codes, I unlocked the secrets of parsing and harnessed the power of temporal understanding.
+* Recursively Querying Web Page Elements
+* Fitting a Browser Binary into a Lambda Function
+* Parsing Dates from Strings
 
 ### Recursively Querying Web Page Elements: A Cosmic Configuration Conquest
 
-As I delved deeper into the cosmic depths of web page analysis, a perplexing puzzle awaited—a web of configurations yearning to be comprehended. How does one traverse the celestial realms of lists and calendars, connecting sub-elements to their cosmic parents with grace and precision?
+As I delved deeper into the cosmic depths of web page analysis, a perplexing puzzle awaited; How does one go from a configuration object to traversing the celestial realms of lists and calendars of webpages?
 
-Like a cosmic voyager armed with recursive prowess, I embarked on a journey of discovery, empowering my algorithms to support any configuration of web page queries. With each iteration, I honed my skills, transcending the boundaries of the known universe and embracing the vast possibilities that cosmic configurations presented.
+Also, how does one connect sub-elements to their parents with grace and precision in this recursive style parsing structure?
 
-This achievement stands as a testament to my dedication and growth as a programmer, empowering me to navigate the intricacies of web page elements with cosmic finesse.
+Turns out it boils down to the following:
 
-Within these remarkable experiences, I aim to convey both the spirit of your own unique voice and a sprinkle of Douglas Adams' cosmic charm. Like Arthur Dent, charting a course through the galaxy with a sense of wonder and a determined spirit, I have ventured into the realm of problem-solving, embracing the extraordinary possibilities that await in every cosmic challenge.
+* Allow queries to be arrays
+* Allow queries to also contain subQueries or arrays of subQueries
+* Spread each subQuery onto parent query
+* Evaluate all matches for all queries
+
+I settled on an elegant solution that involves both iteration and recursion. I also made sure to not include large arguments as the function args are whats stored in the callstack and thus the most likely to cause stack overflows. Instead the burden of memory is in local variables getting iterated over and is this safely not in the stack but instead are in memory.
+
+Psudo code example of the recursion of scraping a web page. All async/sync simplified:
+
+```javascript
+// rootElement: Current root element on loaded web page
+// queries: A query or array of queries
+function getSelectionRecursive(rootElement, queries) {
+    const overallResults = [];
+
+    let baseCaseResults = [];
+    let recursionResults = [];
+
+    // Loop through each query since this can be an array
+    queries.forEach(queryObj => {
+        
+        const selector = queryObj.val;
+        const nextQuery = queryObj.query; // this can be an array
+
+        // base case - extract content here since were at a leaf query
+        if (!nextQuery) {
+            baseCaseResults.push(extractContent(rootElement, selector));
+        } else {
+            // Recursive case!!
+
+            const matchingElements = rootElement.$$(selector);
+
+            // Resutn a result for each matching element
+            matchingElements.forEach(childElement => {
+                const recursionResult = getSelectionRecursive(childElement, nextQuery);
+                recursionResults.push(recursionResult);
+            });
+        }
+
+        // Now combine the base case results w/ the recursive results.
+        // Mostly used for scraping calendars where each parent element
+        // may have to be applied to several child elements
+        baseCaseResults.forEach(baseCaseRes => {
+            recursiveResults.forEach(recursiveResult => {
+                const valToAdd = { ...baseCaseRes, ...recursiveResult };
+                overAllResult.push(valToAdd);
+            })
+        });
+    });
+
+    return overAllResult;
+}
+```
+
+Like a cosmic voyager armed with recursive prowess, I embarked on a journey of discovery, empowering my algorithms to support any configuration of web page queries. With each iteration, I honed my skills, and created the rebust scraping tool that is this tool today.
+
+### Fitting a Browser Binary into a Lambda Function: A Cosmic Conundrum
+
+Imagine the perplexing challenge of running/scraping webpages within the confined universe of a lambda function. Not only is there a size limit for lambda functions, but mere GET requests for a URL fall short as these pages possessed intricate JavaScript code issuing additional requests when the page is loaded; revealing captivating content like local business showtimes and live event updates. Thus is was clear that two things were required to complete this project:
+
+* A way to load web pages in a lambda function
+    * This includes loading and running the javascript on the site
+    * And waiting for the page to fully load
+* A way to navigate though the loaded pages to extract valuable content
+
+Chromium was the clear solution for loading webpages, and the headless setting seemed perfect. Alas, the lambda function size limit threatened to overshadow our cosmic aspirations becuase at first glance the chrome binary was larger than the allowed function size limit.
+
+Yet fear not! With a stroke of cosmic ingenuity, I discovered a stripped-down version of Chromium that snugly fit within the Lambdas. Leveraging [Puppeteer](https://pptr.dev/), googles trusty nodejs chromium sdk guide, I summoned headless browsers from the depths of AWS Lambda, enabling an extraordinary convergence of web page wonder within our cosmic boundaries.
+
+### Parsing Dates from Strings: A Journey through the Galactic Time Vortex
+
+Ah, the enigmatic realm of date formatting, where an infinite variety of date configurations await deciphering. Overcoming this challenge required a combination of resilience and systematic exploration, much like an intrepid hitchhiker seeking to unravel the mysteries of the universe.
+
+To navigate this celestial labyrinth, I adopted an approach of failing early and logging each mischievous date that defied comprehension. Armed with comprehensive unit tests, I transformed these observed failures into guiding stars, illuminating new paths to successful date parsing and ensuring no regressions.
+
+Embracing the diversity of formats, I needed to apply strategies to transform the dates into a consistent format. I chose the javascript native dates to guid me toward the goldilocks zone, so I adopted the end goal of getting the string to be in the workable format: "{day} {month} {year} {timezone}".
+
+I ended up with a general hierarchy of strategies ranging from checking if its in ISO formal, to passing it through a discrete pipeline of immutable strategies which take the string a step closer to being parsable (such as `addYear`, `remove@Symbol`, `addTimeZone`).
 
 ## Example usage of the service
 
