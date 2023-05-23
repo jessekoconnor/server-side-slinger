@@ -7,11 +7,19 @@ Hitchikers guide to the galaxy (Douglas Arthur)
 
 Introducing Server Side Slinger: Empowering Effortless Web Scraping and Dynamic Content Presentation on DashMobile
 
-Server Side Slinger is a cutting-edge service that revolutionizes web scraping and dynamic content display. With its robust capabilities, users can effortlessly extract valuable information from a multitude of web pages and present it seamlessly on DashMobile.
+Server Side Slinger is a cutting-edge service that revolutionizes web scraping and dynamic content display. Users can effortlessly extract valuable information from a multitude of web pages and present it seamlessly on DashMobile.
 
 Driven by a personal need to stay informed about local music events while minimizing manual effort, I meticulously designed this service to cater to individuals like myself who crave convenience. Now, you can effortlessly stay up to date with your favorite local sites, ensuring that no local show slips through the cracks!
 
-One of the remarkable features of Server Side Slinger lies in its optimization for asynchronous execution. Through meticulous fine-tuning, I achieved an impressive 10x boost in performance since starting the project, ensuring lightning-fast results and exceptional user experience.
+* Operates in aws lambda using aws SAM to manage cloud formation
+    * Scraping is supported in parallel for different websites
+    * not parallel for the same site to avoid impolite behavior
+* Wait for a selector before scraping
+    * to allow for javascript to run/execute on the target page
+* Recursive and iterative scraping configurations are supported
+    * recursive to allow for scraping sub elements like in a calendar page
+    * iterative to support scraping a simple list of elements
+* Robust date parsing strategies
 
 * [Backend](https://github.com/jessekoconnor/server-side-slinger): AWS lambda functions, API gateway, Dynamo database
 * [Frontend (Dashmobile)](https://github.com/jessekoconnor/WebSurfer): App store, Reach native, Expo
