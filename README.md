@@ -14,7 +14,7 @@ Driven by a personal need to stay informed about local music events while minimi
 * Operates in aws lambda using aws SAM to manage cloud formation
     * Scraping is supported in parallel for different websites
     * not parallel for the same site to avoid impolite behavior
-* Wait for a selector before scraping
+* Wait for a selector before scraping a site
     * to allow for javascript to run/execute on the target page
 * Recursive and iterative scraping configurations are supported
     * recursive to allow for scraping sub elements like in a calendar page
